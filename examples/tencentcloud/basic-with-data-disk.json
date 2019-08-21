@@ -18,7 +18,11 @@
     "associate_public_ip_address": true,
     "run_tags": {
       "good": "luck"
-    }
+    },
+    "data_disks": [{
+        "disk_type": "CLOUD_PREMIUM",
+	"disk_size": 50
+    }]
   }],
   "provisioners": [{
     "type": "shell",
