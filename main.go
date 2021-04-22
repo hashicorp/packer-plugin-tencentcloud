@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
 	"github.com/hashicorp/packer-plugin-sdk/version"
+	"github.com/hashicorp/packer-plugin-tencentcloud/builder/tencentcloud/cvm"
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 
 func main() {
 	pps := plugin.NewSet()
+	pps.RegisterBuilder("cvm", new(cvm.Builder))
 	pps.SetVersion(PluginVersion)
 	err := pps.Run()
 	if err != nil {

@@ -1,40 +1,34 @@
-packer {
-  required_plugins {
-    scaffolding = {
-      version = ">=v0.1.0"
-      source  = "github.com/hashicorp/scaffolding"
-    }
+variable "secret_id" {
+  type    = string
+  default = "${env("TENCENTCLOUD_ACCESS_KEY")}"
+}
+
+variable "secret_key" {
+  type    = string
+  default = "${env("TENCENTCLOUD_SECRET_KEY")}"
+}
+
+source "tencentcloud-cvm" "example" {
+  associate_public_ip_address = true
+  disk_type                   = "CLOUD_PREMIUM"
+  image_name                  = "PackerTest"
+  instance_type               = "S4.SMALL1"
+  packer_debug                = true
+  region                      = "ap-guangzhou"
+  run_tags = {
+    good = "luck"
   }
-}
-
-source "scaffolding-my-builder" "foo-example" {
-  mock = local.foo
-}
-
-source "scaffolding-my-builder" "bar-example" {
-  mock = local.bar
+  secret_id       = "${var.secret_id}"
+  secret_key      = "${var.secret_key}"
+  source_image_id = "img-oikl1tzv"
+  ssh_username    = "root"
+  zone            = "ap-guangzhou-4"
 }
 
 build {
-  sources = [
-    "source.scaffolding-my-builder.foo-example",
-  ]
+  sources = ["source.tencentcloud-cvm.example"]
 
-  source "source.scaffolding-my-builder.bar-example" {
-    name = "bar"
-  }
-
-  provisioner "scaffolding-my-provisioner" {
-    only = ["scaffolding-my-builder.foo-example"]
-    mock = "foo: ${local.foo}"
-  }
-
-  provisioner "scaffolding-my-provisioner" {
-    only = ["scaffolding-my-builder.bar"]
-    mock = "bar: ${local.bar}"
-  }
-
-  post-processor "scaffolding-my-post-processor" {
-    mock = "post-processor mock-config"
+  provisioner "shell" {
+    inline = ["sleep 30", "yum install redis.x86_64 -y"]
   }
 }
