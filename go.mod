@@ -7,5 +7,5 @@ require (
 	github.com/hashicorp/packer-plugin-sdk v0.2.0
 	github.com/pkg/errors v0.9.1
 	github.com/tencentcloud/tencentcloud-sdk-go v1.0.140
-	github.com/zclconf/go-cty v1.8.2
+	github.com/zclconf/go-cty v1.8.3
 )
