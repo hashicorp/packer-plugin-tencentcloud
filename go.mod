@@ -9,3 +9,6 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go v1.0.152
 	github.com/zclconf/go-cty v1.8.3
 )
+
+// This version contained an invalid version for github.com/tencentcloud/tencentcloud-sdk-go
+retract v1.0.0
