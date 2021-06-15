@@ -1,3 +1,8 @@
+## 1.0.1 (June 15, 2021)
+
+* Downgrade github.com/tencentcloud/tencentcloud-sdk-go to 1.0.152 [GH-36]
+* Add module retraction for plugin version v1.0.0
+
 ## 1.0.0 (June 14, 2021)
 
 * Bump github.com/tencentcloud/tencentcloud-sdk-go to 1.0.173 [GH-34]
