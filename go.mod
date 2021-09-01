@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/hashicorp/hcl/v2 v2.10.1
-	github.com/hashicorp/packer-plugin-sdk v0.2.3
+	github.com/hashicorp/packer-plugin-sdk v0.2.4
 	github.com/pkg/errors v0.9.1
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.233
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.233
