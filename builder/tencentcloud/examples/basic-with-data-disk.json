@@ -1,6 +1,6 @@
 {
   "variables": {
-    "secret_id": "{{env `TENCENTCLOUD_ACCESS_KEY`}}",
+    "secret_id": "{{env `TENCENTCLOUD_SECRET_ID`}}",
     "secret_key": "{{env `TENCENTCLOUD_SECRET_KEY`}}"
   },
   "builders": [

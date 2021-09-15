@@ -46,7 +46,7 @@ var ValidRegions = []Region{
 
 type TencentCloudAccessConfig struct {
 	// Tencentcloud secret id. You should set it directly,
-	// or set the TENCENTCLOUD_ACCESS_KEY environment variable.
+	// or set the TENCENTCLOUD_SECRET_ID environment variable.
 	SecretId string `mapstructure:"secret_id" required:"true"`
 	// Tencentcloud secret key. You should set it directly,
 	// or set the TENCENTCLOUD_SECRET_KEY environment variable.

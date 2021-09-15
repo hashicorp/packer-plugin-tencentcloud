@@ -1,6 +1,6 @@
 variable "secret_id" {
   type    = string
-  default = "${env("TENCENTCLOUD_ACCESS_KEY")}"
+  default = "${env("TENCENTCLOUD_SECRET_ID")}"
 }
 
 variable "secret_key" {
