@@ -23,7 +23,7 @@ a [communicator](/docs/templates/legacy_json_templates/communicator) can be conf
 ### Required:
 
 - `secret_id` (string) - Tencentcloud secret id. You should set it directly,
-  or set the `TENCENTCLOUD_ACCESS_KEY` environment variable.
+  or set the `TENCENTCLOUD_SECRET_ID` environment variable.
 
 - `secret_key` (string) - Tencentcloud secret key. You should set it directly,
   or set the `TENCENTCLOUD_SECRET_KEY` environment variable.
@@ -151,7 +151,7 @@ Here is a basic example for Tencentcloud.
 ```json
 {
   "variables": {
-    "secret_id": "{{env `TENCENTCLOUD_ACCESS_KEY`}}",
+    "secret_id": "{{env `TENCENTCLOUD_SECRET_ID`}}",
     "secret_key": "{{env `TENCENTCLOUD_SECRET_KEY`}}"
   },
   "builders": [
