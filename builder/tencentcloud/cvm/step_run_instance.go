@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 )
 
@@ -21,7 +22,9 @@ type stepRunInstance struct {
 	DiskType                 string
 	DiskSize                 int64
 	HostName                 string
+	InternetChargeType       string
 	InternetMaxBandwidthOut  int64
+	BandwidthPackageId       string
 	AssociatePublicIpAddress bool
 	Tags                     map[string]string
 	DataDisks                []tencentCloudDataDisk
@@ -103,11 +106,12 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 		VpcId:    &vpc_id,
 		SubnetId: &subnet_id,
 	}
-	TRAFFIC_POSTPAID_BY_HOUR := "TRAFFIC_POSTPAID_BY_HOUR"
 	if s.AssociatePublicIpAddress {
 		req.InternetAccessible = &cvm.InternetAccessible{
-			InternetChargeType:      &TRAFFIC_POSTPAID_BY_HOUR,
+			InternetChargeType:      &s.InternetChargeType,
 			InternetMaxBandwidthOut: &s.InternetMaxBandwidthOut,
+			PublicIpAssigned:        common.BoolPtr(true),
+			BandwidthPackageId:      &s.BandwidthPackageId,
 		}
 	}
 	req.InstanceName = &s.InstanceName
@@ -125,6 +129,8 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	req.UserData = &userData
 	var tags []*cvm.Tag
 	for k, v := range s.Tags {
+		k := k
+		v := v
 		tags = append(tags, &cvm.Tag{
 			Key:   &k,
 			Value: &v,

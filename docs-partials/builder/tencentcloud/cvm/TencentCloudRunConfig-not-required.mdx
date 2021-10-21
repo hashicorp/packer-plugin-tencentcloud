@@ -45,10 +45,12 @@
 - `subnect_cidr_block` (string) - Specify cider block of the subnet you will create if
   subnet_id not set
 
-- `internet_charge_type` (string) - Internet Charge Type
+- `internet_charge_type` (string) - Internet charge type of cvm, values can be TRAFFIC_POSTPAID_BY_HOUR, BANDWIDTH_POSTPAID_BY_HOUR, BANDWIDTH_PACKAGE
 
 - `internet_max_bandwidth_out` (int64) - Max bandwidth out your cvm will be launched by(in MB).
   values can be set between 1 ~ 100.
+
+- `bandwidth_package_id` (string) - When internet_charge_type is BANDWIDTH_PACKAGE, bandwidth_package_id is required
 
 - `security_group_id` (string) - Specify securitygroup your cvm will be launched by.
 

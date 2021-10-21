@@ -47,8 +47,9 @@ type FlatConfig struct {
 	SubnetName                *string                    `mapstructure:"subnet_name" required:"false" cty:"subnet_name" hcl:"subnet_name"`
 	CidrBlock                 *string                    `mapstructure:"cidr_block" required:"false" cty:"cidr_block" hcl:"cidr_block"`
 	SubnectCidrBlock          *string                    `mapstructure:"subnect_cidr_block" required:"false" cty:"subnect_cidr_block" hcl:"subnect_cidr_block"`
-	InternetChargeType        *string                    `mapstructure:"internet_charge_type" cty:"internet_charge_type" hcl:"internet_charge_type"`
+	InternetChargeType        *string                    `mapstructure:"internet_charge_type" required:"false" cty:"internet_charge_type" hcl:"internet_charge_type"`
 	InternetMaxBandwidthOut   *int64                     `mapstructure:"internet_max_bandwidth_out" required:"false" cty:"internet_max_bandwidth_out" hcl:"internet_max_bandwidth_out"`
+	BandwidthPackageId        *string                    `mapstructure:"bandwidth_package_id" required:"false" cty:"bandwidth_package_id" hcl:"bandwidth_package_id"`
 	SecurityGroupId           *string                    `mapstructure:"security_group_id" required:"false" cty:"security_group_id" hcl:"security_group_id"`
 	SecurityGroupName         *string                    `mapstructure:"security_group_name" required:"false" cty:"security_group_name" hcl:"security_group_name"`
 	UserData                  *string                    `mapstructure:"user_data" required:"false" cty:"user_data" hcl:"user_data"`
@@ -158,6 +159,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"subnect_cidr_block":           &hcldec.AttrSpec{Name: "subnect_cidr_block", Type: cty.String, Required: false},
 		"internet_charge_type":         &hcldec.AttrSpec{Name: "internet_charge_type", Type: cty.String, Required: false},
 		"internet_max_bandwidth_out":   &hcldec.AttrSpec{Name: "internet_max_bandwidth_out", Type: cty.Number, Required: false},
+		"bandwidth_package_id":         &hcldec.AttrSpec{Name: "bandwidth_package_id", Type: cty.String, Required: false},
 		"security_group_id":            &hcldec.AttrSpec{Name: "security_group_id", Type: cty.String, Required: false},
 		"security_group_name":          &hcldec.AttrSpec{Name: "security_group_name", Type: cty.String, Required: false},
 		"user_data":                    &hcldec.AttrSpec{Name: "user_data", Type: cty.String, Required: false},
