@@ -37,7 +37,8 @@ func (s *stepConfigSubnet) Run(ctx context.Context, state multistep.StateBag) mu
 		if *resp.Response.TotalCount > 0 {
 			s.isCreate = false
 			if *resp.Response.SubnetSet[0].VpcId != vpcId {
-				return Halt(state, fmt.Errorf("The specified subnet(%s) does not belong to the specified vpc(%s)", s.SubnetId, vpcId), "")
+				return Halt(state, fmt.Errorf("The specified subnet(%s) does not belong to the specified vpc(%s)",
+					s.SubnetId, vpcId), "")
 			}
 			state.Put("subnet_id", *resp.Response.SubnetSet[0].SubnetId)
 			Message(state, *resp.Response.SubnetSet[0].SubnetName, "Subnet found")

@@ -39,7 +39,8 @@ func WaitForInstance(ctx context.Context, client *cvm.Client, instanceId string,
 			return fmt.Errorf("instance(%s) not exist", instanceId)
 		}
 		if *resp.Response.InstanceSet[0].InstanceState == status &&
-			(resp.Response.InstanceSet[0].LatestOperationState == nil || *resp.Response.InstanceSet[0].LatestOperationState != "OPERATING") {
+			(resp.Response.InstanceSet[0].LatestOperationState == nil ||
+				*resp.Response.InstanceSet[0].LatestOperationState != "OPERATING") {
 			break
 		}
 		time.Sleep(DefaultWaitForInterval * time.Second)

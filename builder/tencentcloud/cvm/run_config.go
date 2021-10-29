@@ -69,11 +69,14 @@ type TencentCloudRunConfig struct {
 	CidrBlock string `mapstructure:"cidr_block" required:"false"` // 10.0.0.0/16(default), 172.16.0.0/12, 192.168.0.0/16
 	// Specify cider block of the subnet you will create if
 	// subnet_id not set
-	SubnectCidrBlock   string `mapstructure:"subnect_cidr_block" required:"false"`
-	InternetChargeType string `mapstructure:"internet_charge_type"`
+	SubnectCidrBlock string `mapstructure:"subnect_cidr_block" required:"false"`
+	// Internet charge type of cvm, values can be TRAFFIC_POSTPAID_BY_HOUR, BANDWIDTH_POSTPAID_BY_HOUR, BANDWIDTH_PACKAGE
+	InternetChargeType string `mapstructure:"internet_charge_type" required:"false"`
 	// Max bandwidth out your cvm will be launched by(in MB).
 	// values can be set between 1 ~ 100.
 	InternetMaxBandwidthOut int64 `mapstructure:"internet_max_bandwidth_out" required:"false"`
+	// When internet_charge_type is BANDWIDTH_PACKAGE, bandwidth_package_id is required
+	BandwidthPackageId string `mapstructure:"bandwidth_package_id" required:"false"`
 	// Specify securitygroup your cvm will be launched by.
 	SecurityGroupId string `mapstructure:"security_group_id" required:"false"`
 	// Specify security name you will create if security_group_id not set.
@@ -169,6 +172,24 @@ func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
 
 	if cf.DiskSize <= 0 {
 		cf.DiskSize = 50
+	}
+
+	if cf.InternetChargeType == "" {
+		cf.InternetChargeType = "TRAFFIC_POSTPAID_BY_HOUR"
+	}
+
+	validChargeTypes := map[string]int{
+		"TRAFFIC_POSTPAID_BY_HOUR":   0,
+		"BANDWIDTH_POSTPAID_BY_HOUR": 0,
+		"BANDWIDTH_PACKAGE":          0,
+	}
+	if _, ok := validChargeTypes[cf.InternetChargeType]; !ok {
+		errs = append(errs, fmt.Errorf("specified internet_charge_type(%s) is invalid.", cf.InternetChargeType))
+	}
+
+	if cf.InternetChargeType == "BANDWIDTH_PACKAGE" && cf.BandwidthPackageId == "" {
+		errs = append(errs,
+			fmt.Errorf("bandwidth_package_id is required when internet_charge_type is BANDWIDTH_PACKAGE"))
 	}
 
 	if cf.AssociatePublicIpAddress && cf.InternetMaxBandwidthOut <= 0 {

@@ -63,6 +63,7 @@ func (s *stepShareImage) Cleanup(state multistep.StateBag) {
 	req.Permission = common.StringPtr("CANCEL")
 	accounts := make([]*string, 0, len(s.ShareAccounts))
 	for _, account := range s.ShareAccounts {
+		account := account
 		accounts = append(accounts, &account)
 	}
 	req.AccountIds = accounts
