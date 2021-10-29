@@ -111,7 +111,9 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 			InternetChargeType:      &s.InternetChargeType,
 			InternetMaxBandwidthOut: &s.InternetMaxBandwidthOut,
 			PublicIpAssigned:        common.BoolPtr(true),
-			BandwidthPackageId:      &s.BandwidthPackageId,
+		}
+		if s.BandwidthPackageId != "" {
+			req.InternetAccessible.BandwidthPackageId = &s.BandwidthPackageId
 		}
 	}
 	req.InstanceName = &s.InstanceName

@@ -174,10 +174,22 @@ func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
 		cf.DiskSize = 50
 	}
 
-	if cf.InternetChargeType != "TRAFFIC_POSTPAID_BY_HOUR" &&
-		cf.InternetChargeType != "BANDWIDTH_POSTPAID_BY_HOUR" &&
-		cf.InternetChargeType != "BANDWIDTH_PACKAGE" {
+	if cf.InternetChargeType == "" {
 		cf.InternetChargeType = "TRAFFIC_POSTPAID_BY_HOUR"
+	}
+
+	validChargeTypes := map[string]int{
+		"TRAFFIC_POSTPAID_BY_HOUR":   0,
+		"BANDWIDTH_POSTPAID_BY_HOUR": 0,
+		"BANDWIDTH_PACKAGE":          0,
+	}
+	if _, ok := validChargeTypes[cf.InternetChargeType]; !ok {
+		errs = append(errs, fmt.Errorf("specified internet_charge_type(%s) is invalid.", cf.InternetChargeType))
+	}
+
+	if cf.InternetChargeType == "BANDWIDTH_PACKAGE" && cf.BandwidthPackageId == "" {
+		errs = append(errs,
+			fmt.Errorf("bandwidth_package_id is required when internet_charge_type is BANDWIDTH_PACKAGE"))
 	}
 
 	if cf.AssociatePublicIpAddress && cf.InternetMaxBandwidthOut <= 0 {
