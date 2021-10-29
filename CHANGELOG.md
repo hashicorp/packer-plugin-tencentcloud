@@ -1,7 +1,7 @@
 ## 1.0.2 (Upcoming) 
 
 * Add `internet_charge_type` and `bandwidth_package_id` configuration arguments. [GH-49]
-* * Bump github.com/hashicorp/packer-plugin-sdk to 0.2.7 [GH-47]
+* Bump github.com/hashicorp/packer-plugin-sdk to 0.2.7 [GH-47]
 
 ## 1.0.1 (June 15, 2021)
 
