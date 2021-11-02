@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
-	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 )
 
@@ -108,9 +107,11 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 	if s.AssociatePublicIpAddress {
 		req.InternetAccessible = &cvm.InternetAccessible{
-			InternetChargeType:      &s.InternetChargeType,
+			PublicIpAssigned:        &s.AssociatePublicIpAddress,
 			InternetMaxBandwidthOut: &s.InternetMaxBandwidthOut,
-			PublicIpAssigned:        common.BoolPtr(true),
+		}
+		if s.InternetChargeType != "" {
+			req.InternetAccessible.InternetChargeType = &s.InternetChargeType
 		}
 		if s.BandwidthPackageId != "" {
 			req.InternetAccessible.BandwidthPackageId = &s.BandwidthPackageId
