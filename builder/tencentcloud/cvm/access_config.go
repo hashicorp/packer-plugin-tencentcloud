@@ -23,9 +23,11 @@ const (
 	Guangzhou     = Region("ap-guangzhou")
 	GuangzhouOpen = Region("ap-guangzhou-open")
 	Hongkong      = Region("ap-hongkong")
+	Jakarta       = Region("ap-jakarta")
 	Mumbai        = Region("ap-mumbai")
 	Seoul         = Region("ap-seoul")
 	Shanghai      = Region("ap-shanghai")
+	Nanjing       = Region("ap-nanjing")
 	ShanghaiFsi   = Region("ap-shanghai-fsi")
 	ShenzhenFsi   = Region("ap-shenzhen-fsi")
 	Singapore     = Region("ap-singapore")
@@ -35,13 +37,14 @@ const (
 	Ashburn       = Region("na-ashburn")
 	Siliconvalley = Region("na-siliconvalley")
 	Toronto       = Region("na-toronto")
+	SaoPaulo      = Region("sa-saopaulo")
 )
 
 var ValidRegions = []Region{
-	Bangkok, Beijing, Chengdu, Chongqing, Guangzhou, GuangzhouOpen, Hongkong, Shanghai,
+	Bangkok, Beijing, Chengdu, Chongqing, Guangzhou, GuangzhouOpen, Hongkong, Jakarta, Shanghai, Nanjing,
 	ShanghaiFsi, ShenzhenFsi,
 	Mumbai, Seoul, Singapore, Tokyo, Moscow,
-	Frankfurt, Ashburn, Siliconvalley, Toronto,
+	Frankfurt, Ashburn, Siliconvalley, Toronto, SaoPaulo,
 }
 
 type TencentCloudAccessConfig struct {
