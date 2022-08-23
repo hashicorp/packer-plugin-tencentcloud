@@ -9,7 +9,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.367
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.366
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.366
-	github.com/zclconf/go-cty v1.10.0
+	github.com/zclconf/go-cty v1.11.0
 )
 
 require (
