@@ -3,6 +3,7 @@ package cvm
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -105,11 +106,24 @@ func GetImageByName(ctx context.Context, client *cvm.Client, imageName string) (
 }
 
 // NewCvmClient returns a new cvm client
-func NewCvmClient(secretId, secretKey, region string) (client *cvm.Client, err error) {
+func NewCvmClient(secretId, secretKey, region, endpoint string) (client *cvm.Client, err error) {
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.ReqMethod = "POST"
 	cpf.HttpProfile.ReqTimeout = 300
 	cpf.Language = "en-US"
+	if endpoint != "" {
+		var u *url.URL
+		u, err = url.Parse(endpoint)
+		if err != nil {
+			return
+		}
+		if u.Scheme != "" {
+			cpf.HttpProfile.Scheme = u.Scheme
+			cpf.HttpProfile.Endpoint = u.Host
+		} else {
+			cpf.HttpProfile.Endpoint = endpoint
+		}
+	}
 
 	credential := common.NewCredential(secretId, secretKey)
 	client, err = cvm.NewClient(credential, region, cpf)
@@ -118,11 +132,24 @@ func NewCvmClient(secretId, secretKey, region string) (client *cvm.Client, err e
 }
 
 // NewVpcClient returns a new vpc client
-func NewVpcClient(secretId, secretKey, region string) (client *vpc.Client, err error) {
+func NewVpcClient(secretId, secretKey, region, endpoint string) (client *vpc.Client, err error) {
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.ReqMethod = "POST"
 	cpf.HttpProfile.ReqTimeout = 300
 	cpf.Language = "en-US"
+	if endpoint != "" {
+		var u *url.URL
+		u, err = url.Parse(endpoint)
+		if err != nil {
+			return
+		}
+		if u.Scheme != "" {
+			cpf.HttpProfile.Scheme = u.Scheme
+			cpf.HttpProfile.Endpoint = u.Host
+		} else {
+			cpf.HttpProfile.Endpoint = endpoint
+		}
+	}
 
 	credential := common.NewCredential(secretId, secretKey)
 	client, err = vpc.NewClient(credential, region, cpf)

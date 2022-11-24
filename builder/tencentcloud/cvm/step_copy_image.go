@@ -49,7 +49,7 @@ func (s *stepCopyImage) Run(ctx context.Context, state multistep.StateBag) multi
 	tencentCloudImages := state.Get("tencentcloudimages").(map[string]string)
 
 	for _, region := range req.DestinationRegions {
-		rc, err := NewCvmClient(config.SecretId, config.SecretKey, *region)
+		rc, err := NewCvmClient(config.SecretId, config.SecretKey, *region, config.CvmEndpoint)
 		if err != nil {
 			return Halt(state, err, "Failed to init client")
 		}
