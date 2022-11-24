@@ -64,6 +64,12 @@ type TencentCloudAccessConfig struct {
 	Zone string `mapstructure:"zone" required:"true"`
 	// Do not check region and zone when validate.
 	SkipValidation bool `mapstructure:"skip_region_validation" required:"false"`
+	// The endpoint you want to reach the cloud endpoint,
+	// if tce cloud you should set a tce cvm endpoint.
+	CvmEndpoint string `mapstructure:"cvm_endpoint" required:"false"`
+	// The endpoint you want to reach the cloud endpoint,
+	// if tce cloud you should set a tce vpc endpoint.
+	VpcEndpoint string `mapstructure:"vpc_endpoint" required:"false"`
 }
 
 func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
@@ -82,11 +88,11 @@ func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
 		return nil, nil, fmt.Errorf("parameter zone must be set")
 	}
 
-	if cvm_client, err = NewCvmClient(cf.SecretId, cf.SecretKey, cf.Region); err != nil {
+	if cvm_client, err = NewCvmClient(cf.SecretId, cf.SecretKey, cf.Region, cf.CvmEndpoint); err != nil {
 		return nil, nil, err
 	}
 
-	if vpc_client, err = NewVpcClient(cf.SecretId, cf.SecretKey, cf.Region); err != nil {
+	if vpc_client, err = NewVpcClient(cf.SecretId, cf.SecretKey, cf.Region, cf.VpcEndpoint); err != nil {
 		return nil, nil, err
 	}
 
@@ -114,6 +120,11 @@ func (cf *TencentCloudAccessConfig) Prepare(ctx *interpolate.Context) []error {
 
 	if err := cf.Config(); err != nil {
 		errs = append(errs, err)
+	}
+
+	if (cf.CvmEndpoint != "" && cf.VpcEndpoint == "") ||
+		(cf.CvmEndpoint == "" && cf.VpcEndpoint != "") {
+		errs = append(errs, fmt.Errorf("parameter cvm_endpoint and vpc_endpoint must be set simultaneously"))
 	}
 
 	if cf.Region == "" {
@@ -148,6 +159,10 @@ func (cf *TencentCloudAccessConfig) Config() error {
 }
 
 func (cf *TencentCloudAccessConfig) validateRegion() error {
+	// if set cvm endpoint, do not validate region
+	if cf.CvmEndpoint != "" {
+		return nil
+	}
 	return validRegion(cf.Region)
 }
 

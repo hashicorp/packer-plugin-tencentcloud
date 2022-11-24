@@ -37,7 +37,7 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
   for parameter taking.
 
 - `instance_type` (string) - The instance type your cvm will be launched by.
-  You should reference [Instace Type](https://intl.cloud.tencent.com/document/product/213/11518)
+  You should reference [Instance Type](https://intl.cloud.tencent.com/document/product/213/11518)
   for parameter taking.
 
 - `source_image_id` (string) - The base image id of Image you want to create
@@ -125,6 +125,12 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 - `run_tags` (map of strings) - Tags to apply to the instance that is _launched_ to create the image.
   These tags are _not_ applied to the resulting image.
 
+- `cvm_endpoint` (string) - The endpoint you want to reach the cloud endpoint,
+  if tce cloud you should set a tce cvm endpoint.
+
+- `vpc_endpoint` (string) - The endpoint you want to reach the cloud endpoint,
+  if tce cloud you should set a tce vpc endpoint.
+
 ### Communicator Configuration
 
 In addition to the above options, a communicator can be configured
@@ -183,5 +189,5 @@ Here is a basic example for Tencentcloud.
 ```
 
 See the
-[examples/tencentcloud](https://github.com/hashicorp/packer/tree/master/builder/tencentcloud/examples)
+[examples/tencentcloud](https://github.com/hashicorp/packer-plugin-tencentcloud/tree/master/builder/tencentcloud/examples)
 folder in the Packer project for more examples.

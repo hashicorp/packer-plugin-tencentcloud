@@ -24,6 +24,8 @@ type FlatConfig struct {
 	Region                    *string                    `mapstructure:"region" required:"true" cty:"region" hcl:"region"`
 	Zone                      *string                    `mapstructure:"zone" required:"true" cty:"zone" hcl:"zone"`
 	SkipValidation            *bool                      `mapstructure:"skip_region_validation" required:"false" cty:"skip_region_validation" hcl:"skip_region_validation"`
+	CvmEndpoint               *string                    `mapstructure:"cvm_endpoint" required:"false" cty:"cvm_endpoint" hcl:"cvm_endpoint"`
+	VpcEndpoint               *string                    `mapstructure:"vpc_endpoint" required:"false" cty:"vpc_endpoint" hcl:"vpc_endpoint"`
 	ImageName                 *string                    `mapstructure:"image_name" required:"true" cty:"image_name" hcl:"image_name"`
 	ImageDescription          *string                    `mapstructure:"image_description" required:"false" cty:"image_description" hcl:"image_description"`
 	Reboot                    *bool                      `mapstructure:"reboot" required:"false" cty:"reboot" hcl:"reboot"`
@@ -134,6 +136,8 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"region":                       &hcldec.AttrSpec{Name: "region", Type: cty.String, Required: false},
 		"zone":                         &hcldec.AttrSpec{Name: "zone", Type: cty.String, Required: false},
 		"skip_region_validation":       &hcldec.AttrSpec{Name: "skip_region_validation", Type: cty.Bool, Required: false},
+		"cvm_endpoint":                 &hcldec.AttrSpec{Name: "cvm_endpoint", Type: cty.String, Required: false},
+		"vpc_endpoint":                 &hcldec.AttrSpec{Name: "vpc_endpoint", Type: cty.String, Required: false},
 		"image_name":                   &hcldec.AttrSpec{Name: "image_name", Type: cty.String, Required: false},
 		"image_description":            &hcldec.AttrSpec{Name: "image_description", Type: cty.String, Required: false},
 		"reboot":                       &hcldec.AttrSpec{Name: "reboot", Type: cty.Bool, Required: false},
