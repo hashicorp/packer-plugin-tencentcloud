@@ -13,6 +13,7 @@ import (
 
 type stepRunInstance struct {
 	InstanceType             string
+	InstanceChargeType       string
 	UserData                 string
 	UserDataFile             string
 	instanceId               string
@@ -51,15 +52,18 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	Say(state, "Trying to create a new instance", "")
 
 	// config RunInstances parameters
-	POSTPAID_BY_HOUR := "POSTPAID_BY_HOUR"
 	req := cvm.NewRunInstancesRequest()
 	if s.ZoneId != "" {
 		req.Placement = &cvm.Placement{
 			Zone: &s.ZoneId,
 		}
 	}
+	instanceChargeType := s.InstanceChargeType
+	if instanceChargeType == "" {
+		instanceChargeType = "POSTPAID_BY_HOUR"
+	}
+	req.InstanceChargeType = &instanceChargeType
 	req.ImageId = source_image.ImageId
-	req.InstanceChargeType = &POSTPAID_BY_HOUR
 	req.InstanceType = &s.InstanceType
 	// TODO: Add check for system disk size, it should be larger than image system disk size.
 	req.SystemDisk = &cvm.SystemDisk{

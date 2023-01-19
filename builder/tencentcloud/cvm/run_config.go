@@ -31,6 +31,8 @@ type TencentCloudRunConfig struct {
 	// The base image name of Image you want to create your
 	// customized image from.Conflict with SourceImageId.
 	SourceImageName string `mapstructure:"source_image_name" required:"false"`
+	// Charge type of cvm, values can be `POSTPAID_BY_HOUR` (default) `SPOTPAID`
+	InstanceChargeType string `mapstructure:"instance_charge_type" required:"false"`
 	// The instance type your cvm will be launched by.
 	// You should reference Instace Type
 	//  for parameter taking.

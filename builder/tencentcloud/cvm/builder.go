@@ -107,6 +107,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 		},
 		&stepRunInstance{
 			InstanceType:             b.config.InstanceType,
+			InstanceChargeType:       b.config.InstanceChargeType,
 			UserData:                 b.config.UserData,
 			UserDataFile:             b.config.UserDataFile,
 			ZoneId:                   b.config.Zone,
