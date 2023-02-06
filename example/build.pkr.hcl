@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 variable "secret_id" {
   type    = string
   default = "${env("TENCENTCLOUD_SECRET_ID")}"
