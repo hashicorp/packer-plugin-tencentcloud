@@ -3,13 +3,13 @@ module github.com/hashicorp/packer-plugin-tencentcloud
 go 1.18
 
 require (
-	github.com/hashicorp/hcl/v2 v2.13.0
+	github.com/hashicorp/hcl/v2 v2.16.1
 	github.com/hashicorp/packer-plugin-sdk v0.3.1
 	github.com/pkg/errors v0.9.1
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.367
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.366
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.366
-	github.com/zclconf/go-cty v1.10.0
+	github.com/zclconf/go-cty v1.12.1
 )
 
 require (
