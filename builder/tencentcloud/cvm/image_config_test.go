@@ -30,7 +30,7 @@ func TestTencentCloudImageConfig_Prepare(t *testing.T) {
 		t.Fatal("should have err")
 	}
 
-	cf.SkipValidation = true
+	cf.skipValidation = true
 	if err := cf.Prepare(nil); err != nil {
 		t.Fatalf("shouldn't have err:%v", err)
 	}

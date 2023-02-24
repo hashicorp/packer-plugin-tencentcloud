@@ -27,6 +27,9 @@ type Config struct {
 	TencentCloudImageConfig  `mapstructure:",squash"`
 	TencentCloudRunConfig    `mapstructure:",squash"`
 
+	// Do not check region and zone when validate.
+	SkipRegionValidation bool `mapstructure:"skip_region_validation" required:"false"`
+
 	ctx interpolate.Context
 }
 
@@ -52,6 +55,10 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	if err != nil {
 		return nil, nil, err
 	}
+
+	// Propagate SkipRegionValidation to Access/Image configs
+	b.config.TencentCloudAccessConfig.skipValidation = b.config.SkipRegionValidation
+	b.config.TencentCloudImageConfig.skipValidation = b.config.SkipRegionValidation
 
 	// Accumulate any errors
 	var errs *packersdk.MultiError
