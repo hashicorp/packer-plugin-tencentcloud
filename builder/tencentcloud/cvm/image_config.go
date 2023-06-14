@@ -36,6 +36,8 @@ type TencentCloudImageConfig struct {
 	ImageShareAccounts []string `mapstructure:"image_share_accounts" required:"false"`
 	// Do not check region and zone when validate.
 	SkipValidation bool `mapstructure:"skip_region_validation" required:"false"`
+	// Key/value pair tags that will be applied to the resulting image.
+	ImageTags map[string]string `mapstructure:"image_tags" required:"false"`
 }
 
 func (cf *TencentCloudImageConfig) Prepare(ctx *interpolate.Context) []error {
@@ -72,6 +74,10 @@ func (cf *TencentCloudImageConfig) Prepare(ctx *interpolate.Context) []error {
 			regions = append(regions, region)
 		}
 		cf.ImageCopyRegions = regions
+	}
+
+	if cf.ImageTags == nil {
+		cf.ImageTags = make(map[string]string)
 	}
 
 	if len(errs) > 0 {
