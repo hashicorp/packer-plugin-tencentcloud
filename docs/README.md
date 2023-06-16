@@ -20,7 +20,7 @@ Then, run [`packer init`](https://www.packer.io/docs/commands/init).
 packer {
   required_plugins {
     tencentcloud = {
-      version = ">= 1.0.6"
+      version = ">= 1.1.0"
       source  = "github.com/hashicorp/tencentcloud"
     }
   }
