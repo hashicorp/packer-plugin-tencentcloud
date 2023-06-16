@@ -52,6 +52,26 @@ func (s *stepCreateImage) Run(ctx context.Context, state multistep.StateBag) mul
 		req.Sysprep = &False
 	}
 
+	var tags []*cvm.Tag
+	for k, v := range config.ImageTags {
+		k := k
+		v := v
+		tags = append(tags, &cvm.Tag{
+			Key:   &k,
+			Value: &v,
+		})
+	}
+
+	resourceType := "image"
+	if len(tags) > 0 {
+		req.TagSpecification = []*cvm.TagSpecification{
+			{
+				ResourceType: &resourceType,
+				Tags:         tags,
+			},
+		}
+	}
+
 	err := Retry(ctx, func(ctx context.Context) error {
 		_, e := client.CreateImage(req)
 		return e

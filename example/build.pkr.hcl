@@ -12,20 +12,25 @@ variable "secret_key" {
 }
 
 source "tencentcloud-cvm" "example" {
-  associate_public_ip_address = true
-  disk_type                   = "CLOUD_PREMIUM"
-  image_name                  = "PackerTest"
-  instance_type               = "S4.SMALL1"
-  packer_debug                = true
-  region                      = "ap-guangzhou"
-  run_tags = {
+  disk_type     = "CLOUD_PREMIUM"
+  image_name    = "PackerTest"
+  instance_type = "SA2.MEDIUM2"
+  packer_debug  = true
+  region        = "ap-guangzhou"
+  run_tags      = {
     good = "luck"
   }
-  secret_id       = "${var.secret_id}"
-  secret_key      = "${var.secret_key}"
-  source_image_id = "img-oikl1tzv"
-  ssh_username    = "root"
-  zone            = "ap-guangzhou-4"
+  secret_id                   = "${var.secret_id}"
+  secret_key                  = "${var.secret_key}"
+  source_image_id             = "img-9qrfy1xt"
+  ssh_username                = "root"
+  zone                        = "ap-guangzhou-3"
+  security_group_id           = "sg-r7kju7cf"
+  associate_public_ip_address = true
+  image_tags                  = {
+    createdBy = "packer"
+    usedBy    = "test"
+  }
 }
 
 build {
