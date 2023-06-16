@@ -65,14 +65,13 @@ type TencentCloudAccessConfig struct {
 	// reference Region and Zone
 	//  for parameter taking.
 	Zone string `mapstructure:"zone" required:"true"`
-	// Do not check region and zone when validate.
-	SkipValidation bool `mapstructure:"skip_region_validation" required:"false"`
 	// The endpoint you want to reach the cloud endpoint,
 	// if tce cloud you should set a tce cvm endpoint.
 	CvmEndpoint string `mapstructure:"cvm_endpoint" required:"false"`
 	// The endpoint you want to reach the cloud endpoint,
 	// if tce cloud you should set a tce vpc endpoint.
-	VpcEndpoint string `mapstructure:"vpc_endpoint" required:"false"`
+	VpcEndpoint    string `mapstructure:"vpc_endpoint" required:"false"`
+	skipValidation bool
 }
 
 func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
@@ -132,7 +131,7 @@ func (cf *TencentCloudAccessConfig) Prepare(ctx *interpolate.Context) []error {
 
 	if cf.Region == "" {
 		errs = append(errs, fmt.Errorf("parameter region must be set"))
-	} else if !cf.SkipValidation {
+	} else if !cf.skipValidation {
 		if err := cf.validateRegion(); err != nil {
 			errs = append(errs, err)
 		}
