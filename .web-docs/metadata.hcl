@@ -2,11 +2,11 @@
 # https://github.com/hashicorp/integration-template#metadata-configuration
 integration {
   name = "Tencent Cloud"
-  description = "TODO"
+  description = "The Tencent Cloud plugin contains a single builder [tencentcloud-cvm](/docs/builders/cvm.mdx) that provides the capability to build customized images based on an existing base images."
   identifier = "packer/BrandonRomano/tencentcloud"
   component {
     type = "builder"
-    name = "Tencentcloud Image Builder"
+    name = "Tencent Cloud Builder"
     slug = "cvm"
   }
 }
