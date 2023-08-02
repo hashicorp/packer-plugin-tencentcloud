@@ -99,3 +99,5 @@ require (
 
 // This version contained an invalid version for github.com/tencentcloud/tencentcloud-sdk-go
 retract v1.0.0
+
+replace github.com/zclconf/go-cty => github.com/nywilken/go-cty v1.12.1 // added by packer-sdc fix as noted in github.com/hashicorp/packer-plugin-sdk/issues/187
