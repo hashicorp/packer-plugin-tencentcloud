@@ -16,7 +16,7 @@ packer {
 Alternatively, you can use `packer plugins install` to manage installation of this plugin.
 
 ```sh
-packer plugins install github.com/hashicorp/ansible
+packer plugins install github.com/hashicorp/tencentcloud
 ```
 
 ### Components
