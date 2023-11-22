@@ -52,15 +52,15 @@ func (s *stepCopyImage) Run(ctx context.Context, state multistep.StateBag) multi
 	tencentCloudImages := state.Get("tencentcloudimages").(map[string]string)
 
 	cf := &TencentCloudAccessConfig{
-		SecretId: config.SecretId,
-		SecretKey: config.SecretKey,
-		Zone: config.Zone,
-		CvmEndpoint: config.CvmEndpoint,
-		SecurityToken: config.SecurityToken,
-		RoleArn: config.RoleArn,
-		SessionName: config.SessionName,
-		SessionDuration: config.SessionDuration,
-		Profile: config.Profile,
+		SecretId:             config.SecretId,
+		SecretKey:            config.SecretKey,
+		Zone:                 config.Zone,
+		CvmEndpoint:          config.CvmEndpoint,
+		SecurityToken:        config.SecurityToken,
+		RoleArn:              config.RoleArn,
+		SessionName:          config.SessionName,
+		SessionDuration:      config.SessionDuration,
+		Profile:              config.Profile,
 		SharedCredentialsDir: config.SharedCredentialsDir,
 	}
 
