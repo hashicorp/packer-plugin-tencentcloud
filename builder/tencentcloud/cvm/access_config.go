@@ -7,12 +7,31 @@ package cvm
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"runtime"
+	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/mitchellh/go-homedir"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
+)
+
+const (
+	PACKER_SECRET_ID                    = "TENCENTCLOUD_SECRET_ID"
+	PACKER_SECRET_KEY                   = "TENCENTCLOUD_SECRET_KEY"
+	PACKER_SECURITY_TOKEN               = "TENCENTCLOUD_SECURITY_TOKEN"
+	PACKER_REGION                       = "TENCENTCLOUD_REGION"
+	PACKER_ASSUME_ROLE_ARN              = "TENCENTCLOUD_ASSUME_ROLE_ARN"
+	PACKER_ASSUME_ROLE_SESSION_NAME     = "TENCENTCLOUD_ASSUME_ROLE_SESSION_NAME"
+	PACKER_ASSUME_ROLE_SESSION_DURATION = "TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION"
+	PACKER_PROFILE                      = "TENCENTCLOUD_PROFILE"
+	PACKER_SHARED_CREDENTIALS_DIR       = "TENCENTCLOUD_SHARED_CREDENTIALS_DIR"
+	DEFAULT_REGION                      = "ap-guangzhou"
+	DEFAULT_PROFILE                     = "default"
 )
 
 type Region string
@@ -50,6 +69,8 @@ var ValidRegions = []Region{
 	Frankfurt, Ashburn, Siliconvalley, Toronto, SaoPaulo,
 }
 
+var packerConfig map[string]interface{}
+
 type TencentCloudAccessConfig struct {
 	// Tencentcloud secret id. You should set it directly,
 	// or set the TENCENTCLOUD_SECRET_ID environment variable.
@@ -70,8 +91,31 @@ type TencentCloudAccessConfig struct {
 	CvmEndpoint string `mapstructure:"cvm_endpoint" required:"false"`
 	// The endpoint you want to reach the cloud endpoint,
 	// if tce cloud you should set a tce vpc endpoint.
-	VpcEndpoint    string `mapstructure:"vpc_endpoint" required:"false"`
+	VpcEndpoint string `mapstructure:"vpc_endpoint" required:"false"`
+	// The region validation can be skipped if this value is true, the default
+	// value is false.
 	skipValidation bool
+	// STS access token, can be set through template or by exporting
+	// as environment variable such as `export SECURITY_TOKEN=value`.
+	SecurityToken string `mapstructure:"security_token" required:"false"`
+	// The ARN of the role to assume.
+	// It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.
+	RoleArn string `mapstructure:"role_arn" required:"false"`
+	// The session name to use when making the AssumeRole call.
+	// It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_NAME`.
+	SessionName string `mapstructure:"session_name" required:"false"`
+	// The duration of the session when making the AssumeRole call.
+	// Its value ranges from 0 to 43200(seconds), and default is 7200 seconds.
+	// It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.",
+	SessionDuration int `mapstructure:"session_duration" required:"false"`
+	// The directory of the shared credentials.
+	// It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
+	// If not set this defaults to ~/.tccli.
+	Profile string
+	// The profile name as set in the shared credentials.
+	// It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable.
+	// If not set, the default profile created with `tccli configure` will be used.
+	SharedCredentialsDir string
 }
 
 func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
@@ -82,6 +126,27 @@ func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
 		resp       *cvm.DescribeZonesResponse
 	)
 
+	var getProviderConfig = func(str string, key string) string {
+		value, err := getConfigFromProfile(cf, key)
+		if err == nil && value != nil {
+			str = value.(string)
+		}
+		return str
+	}
+
+	if cf.SecretId == "" {
+		cf.SecretId = getProviderConfig(cf.SecretId, "secret_id")
+	}
+	if cf.SecretKey == "" {
+		cf.SecretKey = getProviderConfig(cf.SecretKey, "secret_key")
+	}
+	if cf.SecurityToken == "" {
+		cf.SecurityToken = getProviderConfig(cf.SecurityToken, "security_token")
+	}
+	if cf.Region == "" {
+		cf.Region = getProviderConfig(cf.Region, "region")
+	}
+
 	if err = cf.validateRegion(); err != nil {
 		return nil, nil, err
 	}
@@ -90,11 +155,11 @@ func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
 		return nil, nil, fmt.Errorf("parameter zone must be set")
 	}
 
-	if cvm_client, err = NewCvmClient(cf.SecretId, cf.SecretKey, cf.Region, cf.CvmEndpoint); err != nil {
+	if cvm_client, err = NewCvmClient(cf); err != nil {
 		return nil, nil, err
 	}
 
-	if vpc_client, err = NewVpcClient(cf.SecretId, cf.SecretKey, cf.Region, cf.VpcEndpoint); err != nil {
+	if vpc_client, err = NewVpcClient(cf); err != nil {
 		return nil, nil, err
 	}
 
@@ -146,15 +211,23 @@ func (cf *TencentCloudAccessConfig) Prepare(ctx *interpolate.Context) []error {
 
 func (cf *TencentCloudAccessConfig) Config() error {
 	if cf.SecretId == "" {
-		cf.SecretId = os.Getenv("TENCENTCLOUD_SECRET_ID")
+		cf.SecretId = os.Getenv(PACKER_SECRET_ID)
 	}
 
 	if cf.SecretKey == "" {
-		cf.SecretKey = os.Getenv("TENCENTCLOUD_SECRET_KEY")
+		cf.SecretKey = os.Getenv(PACKER_SECRET_KEY)
 	}
 
-	if cf.SecretId == "" || cf.SecretKey == "" {
-		return fmt.Errorf("parameter secret_id and secret_key must be set")
+	if cf.Profile == "" {
+		cf.Profile = os.Getenv(PACKER_PROFILE)
+	}
+
+	if cf.SharedCredentialsDir == "" {
+		cf.SharedCredentialsDir = os.Getenv(PACKER_SHARED_CREDENTIALS_DIR)
+	}
+
+	if (cf.SecretId == "" || cf.SecretKey == "") && cf.Profile == "" {
+		return fmt.Errorf("The parameter secret_id and secret_key must be set or a profile must be set.")
 	}
 
 	return nil
@@ -176,4 +249,87 @@ func validRegion(region string) error {
 	}
 
 	return fmt.Errorf("unknown region: %s", region)
+}
+
+func getConfigFromProfile(cf *TencentCloudAccessConfig, ProfileKey string) (interface{}, error) {
+	var (
+		profile              string
+		sharedCredentialsDir string
+		credentialPath       string
+		configurePath        string
+	)
+
+	if cf.Profile != "" {
+		profile = cf.Profile
+	} else {
+		profile = DEFAULT_PROFILE
+	}
+
+	if cf.SharedCredentialsDir != "" {
+		sharedCredentialsDir = cf.SharedCredentialsDir
+	}
+
+	tmpSharedCredentialsDir, err := homedir.Expand(sharedCredentialsDir)
+	if err != nil {
+		return nil, err
+	}
+
+	if tmpSharedCredentialsDir == "" {
+		credentialPath = fmt.Sprintf("%s/.tccli/%s.credential", os.Getenv("HOME"), profile)
+		configurePath = fmt.Sprintf("%s/.tccli/%s.configure", os.Getenv("HOME"), profile)
+		if runtime.GOOS == "windows" {
+			credentialPath = fmt.Sprintf("%s/.tccli/%s.credential", os.Getenv("USERPROFILE"), profile)
+			configurePath = fmt.Sprintf("%s/.tccli/%s.configure", os.Getenv("USERPROFILE"), profile)
+		}
+	} else {
+		credentialPath = fmt.Sprintf("%s/%s.credential", sharedCredentialsDir, profile)
+		configurePath = fmt.Sprintf("%s/%s.configure", sharedCredentialsDir, profile)
+	}
+
+	packerConfig = make(map[string]interface{})
+	_, err = os.Stat(credentialPath)
+	if !os.IsNotExist(err) {
+		data, err := ioutil.ReadFile(credentialPath)
+		if err != nil {
+			return nil, err
+		}
+
+		config := map[string]interface{}{}
+		err = json.Unmarshal(data, &config)
+		if err != nil {
+			return nil, err
+		}
+
+		for k, v := range config {
+			packerConfig[k] = strings.TrimSpace(v.(string))
+		}
+	}
+	_, err = os.Stat(configurePath)
+	if !os.IsNotExist(err) {
+		data, err := ioutil.ReadFile(configurePath)
+		if err != nil {
+			return nil, err
+		}
+
+		config := map[string]interface{}{}
+		err = json.Unmarshal(data, &config)
+		if err != nil {
+			return nil, err
+		}
+
+	outerLoop:
+		for k, v := range config {
+			if k == "_sys_param" {
+				tmpMap := v.(map[string]interface{})
+				for tmpK, tmpV := range tmpMap {
+					if tmpK == "region" {
+						packerConfig[tmpK] = strings.TrimSpace(tmpV.(string))
+						break outerLoop
+					}
+				}
+			}
+		}
+	}
+
+	return packerConfig[ProfileKey], nil
 }

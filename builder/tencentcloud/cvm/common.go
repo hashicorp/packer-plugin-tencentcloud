@@ -18,6 +18,7 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
+	sts "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sts/v20180813"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
@@ -109,53 +110,35 @@ func GetImageByName(ctx context.Context, client *cvm.Client, imageName string) (
 }
 
 // NewCvmClient returns a new cvm client
-func NewCvmClient(secretId, secretKey, region, endpoint string) (client *cvm.Client, err error) {
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.ReqMethod = "POST"
-	cpf.HttpProfile.ReqTimeout = 300
-	cpf.Language = "en-US"
-	if endpoint != "" {
-		var u *url.URL
-		u, err = url.Parse(endpoint)
-		if err != nil {
-			return
-		}
-		if u.Scheme != "" {
-			cpf.HttpProfile.Scheme = u.Scheme
-			cpf.HttpProfile.Endpoint = u.Host
-		} else {
-			cpf.HttpProfile.Endpoint = endpoint
-		}
+func NewCvmClient(cf *TencentCloudAccessConfig) (client *cvm.Client, err error) {
+	apiV3Conn, err := packerConfigClient(cf)
+	if err != nil {
+		return nil, err
 	}
 
-	credential := common.NewCredential(secretId, secretKey)
-	client, err = cvm.NewClient(credential, region, cpf)
+	cvmClientProfile, err := newClientProfile(cf.CvmEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	client = apiV3Conn.UseCvmClient(cvmClientProfile)
 
 	return
 }
 
 // NewVpcClient returns a new vpc client
-func NewVpcClient(secretId, secretKey, region, endpoint string) (client *vpc.Client, err error) {
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.ReqMethod = "POST"
-	cpf.HttpProfile.ReqTimeout = 300
-	cpf.Language = "en-US"
-	if endpoint != "" {
-		var u *url.URL
-		u, err = url.Parse(endpoint)
-		if err != nil {
-			return
-		}
-		if u.Scheme != "" {
-			cpf.HttpProfile.Scheme = u.Scheme
-			cpf.HttpProfile.Endpoint = u.Host
-		} else {
-			cpf.HttpProfile.Endpoint = endpoint
-		}
+func NewVpcClient(cf *TencentCloudAccessConfig) (client *vpc.Client, err error) {
+	apiV3Conn, err := packerConfigClient(cf)
+	if err != nil {
+		return nil, err
 	}
 
-	credential := common.NewCredential(secretId, secretKey)
-	client, err = vpc.NewClient(credential, region, cpf)
+	vpcClientProfile, err := newClientProfile(cf.VpcEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	client = apiV3Conn.UseVpcClient(vpcClientProfile)
 
 	return
 }
@@ -257,4 +240,109 @@ func Halt(state multistep.StateBag, err error, prefix string) multistep.StepActi
 	state.Put("error", err)
 
 	return multistep.ActionHalt
+}
+
+func packerConfigClient(cf *TencentCloudAccessConfig) (*TencentCloudClient, error) {
+	clientProfile, err := newClientProfile("")
+	if err != nil {
+		return nil, err
+	}
+
+	apiV3Conn := &TencentCloudClient{
+		Credential: common.NewTokenCredential(
+			cf.SecretId,
+			cf.SecretKey,
+			cf.SecurityToken,
+		),
+		Region:        cf.Region,
+		ClientProfile: clientProfile,
+	}
+
+	if cf.RoleArn != "" && cf.SessionName != "" {
+		if cf.SessionDuration == 0 {
+			cf.SessionDuration = 7200
+		}
+		err = genClientWithSTS(apiV3Conn, cf.RoleArn, cf.SessionName, cf.SessionDuration, "")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var (
+		assumeRoleArn             string
+		assumeRoleSessionName     string
+		assumeRoleSessionDuration int
+		assumeRolePolicy          string
+	)
+	if packerConfig["role-arn"] != nil {
+		assumeRoleArn = packerConfig["role-arn"].(string)
+	}
+
+	if packerConfig["role-session-name"] != nil {
+		assumeRoleSessionName = packerConfig["role-session-name"].(string)
+	}
+
+	if assumeRoleArn != "" && assumeRoleSessionName != "" {
+		assumeRoleSessionDuration = 7200
+		assumeRolePolicy = ""
+
+		err = genClientWithSTS(apiV3Conn, assumeRoleArn, assumeRoleSessionName, assumeRoleSessionDuration, assumeRolePolicy)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return apiV3Conn, nil
+}
+
+func newClientProfile(endpoint string) (*profile.ClientProfile, error) {
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.ReqMethod = "POST"
+	cpf.HttpProfile.ReqTimeout = 300
+	cpf.Language = "en-US"
+	if endpoint != "" {
+		var u *url.URL
+		u, err := url.Parse(endpoint)
+		if err != nil {
+			return nil, err
+		}
+		if u.Scheme != "" {
+			cpf.HttpProfile.Scheme = u.Scheme
+			cpf.HttpProfile.Endpoint = u.Host
+		} else {
+			cpf.HttpProfile.Endpoint = endpoint
+		}
+	}
+
+	return cpf, nil
+}
+
+func genClientWithSTS(apiV3Conn *TencentCloudClient, assumeRoleArn, assumeRoleSessionName string, assumeRoleSessionDuration int, assumeRolePolicy string) error {
+	stsClient := apiV3Conn.stsConn
+
+	// applying STS credentials
+	request := sts.NewAssumeRoleRequest()
+	request.RoleArn = &assumeRoleArn
+	request.RoleSessionName = &assumeRoleSessionName
+	request.DurationSeconds = IntUint64(assumeRoleSessionDuration)
+	if assumeRolePolicy != "" {
+		request.Policy = &assumeRolePolicy
+	}
+	response, err := stsClient.AssumeRole(request)
+	if err != nil {
+		return err
+	}
+	// using STS credentials
+	apiV3Conn.Credential = common.NewTokenCredential(
+		*response.Response.Credentials.TmpSecretId,
+		*response.Response.Credentials.TmpSecretKey,
+		*response.Response.Credentials.Token,
+	)
+
+	return nil
+}
+
+func IntUint64(i int) *uint64 {
+	u := uint64(i)
+	return &u
 }
