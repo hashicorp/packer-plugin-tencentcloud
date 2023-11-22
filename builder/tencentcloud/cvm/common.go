@@ -268,25 +268,24 @@ func packerConfigClient(cf *TencentCloudAccessConfig) (*TencentCloudClient, erro
 		}
 	}
 
-	var (
-		assumeRoleArn             string
-		assumeRoleSessionName     string
-		assumeRoleSessionDuration int
-		assumeRolePolicy          string
-	)
-	if packerConfig["role-arn"] != nil {
-		assumeRoleArn = packerConfig["role-arn"].(string)
+	if cf.RoleArn == "" && packerConfig["role-arn"] != nil {
+		cf.RoleArn = packerConfig["role-arn"].(string)
 	}
 
-	if packerConfig["role-session-name"] != nil {
-		assumeRoleSessionName = packerConfig["role-session-name"].(string)
+	if cf.SessionName == "" && packerConfig["role-session-name"] != nil {
+		cf.SessionName = packerConfig["role-session-name"].(string)
 	}
 
-	if assumeRoleArn != "" && assumeRoleSessionName != "" {
-		assumeRoleSessionDuration = 7200
-		assumeRolePolicy = ""
+	if cf.SessionDuration == 0 && packerConfig["role-session-duration"] != nil {
+		cf.SessionDuration = packerConfig["role-session-duration"].(int)
+	}
 
-		err = genClientWithSTS(apiV3Conn, assumeRoleArn, assumeRoleSessionName, assumeRoleSessionDuration, assumeRolePolicy)
+	if cf.RoleArn != "" && cf.SessionName != "" {
+		if cf.SessionDuration == 0 {
+			cf.SessionDuration = 7200
+		}
+
+		err = genClientWithSTS(apiV3Conn, cf.RoleArn, cf.SessionName, cf.SessionDuration, "")
 		if err != nil {
 			return nil, err
 		}
@@ -318,7 +317,7 @@ func newClientProfile(endpoint string) (*profile.ClientProfile, error) {
 }
 
 func genClientWithSTS(apiV3Conn *TencentCloudClient, assumeRoleArn, assumeRoleSessionName string, assumeRoleSessionDuration int, assumeRolePolicy string) error {
-	stsClient := apiV3Conn.stsConn
+	stsClient := apiV3Conn.UseStsClient()
 
 	// applying STS credentials
 	request := sts.NewAssumeRoleRequest()

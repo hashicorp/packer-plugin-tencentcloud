@@ -108,14 +108,13 @@ type TencentCloudAccessConfig struct {
 	// Its value ranges from 0 to 43200(seconds), and default is 7200 seconds.
 	// It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.",
 	SessionDuration int `mapstructure:"session_duration" required:"false"`
-	// The directory of the shared credentials.
-	// It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
-	// If not set this defaults to ~/.tccli.
-	Profile string
 	// The profile name as set in the shared credentials.
 	// It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable.
 	// If not set, the default profile created with `tccli configure` will be used.
-	SharedCredentialsDir string
+	Profile string `mapstructure:"profile" required:"false"`
+	// The directory of the shared credentials.
+	// It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
+	SharedCredentialsDir string `mapstructure:"shared_credentials_dir" required:"false"`
 }
 
 func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
@@ -125,27 +124,6 @@ func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
 		vpc_client *vpc.Client
 		resp       *cvm.DescribeZonesResponse
 	)
-
-	var getProviderConfig = func(str string, key string) string {
-		value, err := getConfigFromProfile(cf, key)
-		if err == nil && value != nil {
-			str = value.(string)
-		}
-		return str
-	}
-
-	if cf.SecretId == "" {
-		cf.SecretId = getProviderConfig(cf.SecretId, "secret_id")
-	}
-	if cf.SecretKey == "" {
-		cf.SecretKey = getProviderConfig(cf.SecretKey, "secret_key")
-	}
-	if cf.SecurityToken == "" {
-		cf.SecurityToken = getProviderConfig(cf.SecurityToken, "security_token")
-	}
-	if cf.Region == "" {
-		cf.Region = getProviderConfig(cf.Region, "region")
-	}
 
 	if err = cf.validateRegion(); err != nil {
 		return nil, nil, err
@@ -227,7 +205,34 @@ func (cf *TencentCloudAccessConfig) Config() error {
 	}
 
 	if (cf.SecretId == "" || cf.SecretKey == "") && cf.Profile == "" {
-		return fmt.Errorf("The parameter secret_id and secret_key must be set or a profile must be set.")
+		return fmt.Errorf("parameter secret_id and secret_key must be set or a profile must be set")
+	}
+
+	if (cf.SecretId == "" || cf.SecretKey == "") && cf.Profile != "" {
+		var getProviderConfig = func(str string, key string) string {
+			value, err := getConfigFromProfile(cf, key)
+			if err == nil && value != nil {
+				str = value.(string)
+			}
+			return str
+		}
+	
+		if cf.SecretId == "" {
+			cf.SecretId = getProviderConfig(cf.SecretId, "secretId")
+		}
+		if cf.SecretKey == "" {
+			cf.SecretKey = getProviderConfig(cf.SecretKey, "secretKey")
+		}
+		if cf.SecurityToken == "" {
+			cf.SecurityToken = getProviderConfig(cf.SecurityToken, "securityToken")
+		}
+		if cf.Region == "" {
+			cf.Region = getProviderConfig(cf.Region, "region")
+		}
+	}
+
+	if cf.SecretId == "" || cf.SecretKey == "" {
+		return fmt.Errorf("secret_id and secret_key not found in profile, parameter secret_id and secret_key must be set, cf:%+v", cf)
 	}
 
 	return nil
@@ -303,6 +308,8 @@ func getConfigFromProfile(cf *TencentCloudAccessConfig, ProfileKey string) (inte
 		for k, v := range config {
 			packerConfig[k] = strings.TrimSpace(v.(string))
 		}
+	} else {
+		return nil, err
 	}
 	_, err = os.Stat(configurePath)
 	if !os.IsNotExist(err) {
@@ -329,6 +336,8 @@ func getConfigFromProfile(cf *TencentCloudAccessConfig, ProfileKey string) (inte
 				}
 			}
 		}
+	} else {
+		return nil, err
 	}
 
 	return packerConfig[ProfileKey], nil
