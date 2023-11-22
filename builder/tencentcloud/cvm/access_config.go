@@ -219,11 +219,13 @@ func (cf *TencentCloudAccessConfig) Config() error {
 
 	if cf.SessionDuration == 0 {
 		duration := os.Getenv(PACKER_ASSUME_ROLE_SESSION_DURATION)
-		durationInt, err := strconv.Atoi(duration)
-		if err != nil {
-			return err
+		if duration != "" {
+			durationInt, err := strconv.Atoi(duration)
+			if err != nil {
+				return err
+			}
+			cf.SessionDuration = durationInt
 		}
-		cf.SessionDuration = durationInt
 	}
 
 	if (cf.SecretId == "" || cf.SecretKey == "") && cf.Profile != "" {
@@ -305,8 +307,8 @@ func getConfigFromProfile(cf *TencentCloudAccessConfig, ProfileKey string) (inte
 			configurePath = fmt.Sprintf("%s/.tccli/%s.configure", os.Getenv("USERPROFILE"), profile)
 		}
 	} else {
-		credentialPath = fmt.Sprintf("%s/%s.credential", sharedCredentialsDir, profile)
-		configurePath = fmt.Sprintf("%s/%s.configure", sharedCredentialsDir, profile)
+		credentialPath = fmt.Sprintf("%s/%s.credential", tmpSharedCredentialsDir, profile)
+		configurePath = fmt.Sprintf("%s/%s.configure", tmpSharedCredentialsDir, profile)
 	}
 
 	packerConfig = make(map[string]interface{})
