@@ -112,6 +112,7 @@ type TencentCloudAccessConfig struct {
 	// The profile name as set in the shared credentials.
 	// It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable.
 	// If not set, the default profile created with `tccli configure` will be used.
+	// If not set this defaults to ~/.tccli.
 	Profile string `mapstructure:"profile" required:"false"`
 	// The directory of the shared credentials.
 	// It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
