@@ -6,9 +6,10 @@ require (
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/hashicorp/packer-plugin-sdk v0.5.2
 	github.com/pkg/errors v0.9.1
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.367
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.366
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.366
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.799
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.799
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sts v1.0.797
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.799
 	github.com/zclconf/go-cty v1.13.3
 )
 
