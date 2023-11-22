@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
@@ -206,6 +207,23 @@ func (cf *TencentCloudAccessConfig) Config() error {
 
 	if (cf.SecretId == "" || cf.SecretKey == "") && cf.Profile == "" {
 		return fmt.Errorf("parameter secret_id and secret_key must be set or a profile must be set")
+	}
+
+	if cf.RoleArn == "" {
+		cf.RoleArn = os.Getenv(PACKER_ASSUME_ROLE_ARN)
+	}
+
+	if cf.SessionName == "" {
+		cf.SessionName = os.Getenv(PACKER_ASSUME_ROLE_SESSION_NAME)
+	}
+
+	if cf.SessionDuration == 0 {
+		duration := os.Getenv(PACKER_ASSUME_ROLE_SESSION_DURATION)
+		durationInt, err := strconv.Atoi(duration)
+		if err != nil {
+			return err
+		}
+		cf.SessionDuration = durationInt
 	}
 
 	if (cf.SecretId == "" || cf.SecretKey == "") && cf.Profile != "" {

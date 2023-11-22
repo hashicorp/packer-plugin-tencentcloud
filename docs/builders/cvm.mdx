@@ -49,6 +49,23 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 ### Optional:
 
+- `security_token` (string) - STS access token, can be set through template or by exporting 
+  as environment variable such as `export SECURITY_TOKEN=value`.
+
+- `role_arn` (string) - The ARN of the role to assume.
+  It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.
+
+- `session_duration` (int) - The duration of the session when making the AssumeRole call.
+  Its value ranges from 0 to 43200(seconds), and default is 7200 seconds.
+  It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.
+
+- `profile` (string) - The profile name as set in the shared credentials.
+  It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable.
+  If not set, the default profile created with `tccli configure` will be used.
+
+- `shared_credentials_dir` (string) - The directory of the shared credentials.
+  It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
+
 - `force_poweroff` (boolean) - Indicates whether to perform a forced shutdown to
   create an image when soft shutdown fails. Default value is `false`.
 
