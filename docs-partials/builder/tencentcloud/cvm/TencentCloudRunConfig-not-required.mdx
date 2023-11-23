@@ -18,6 +18,8 @@
   for parameter taking.
 
 - `disk_size` (int64) - Root disk size your cvm will be launched by. values range(in GB):
+  - LOCAL_BASIC: 50
+  - Other: 50 ~ 1000 (need whitelist if > 50)
 
 - `data_disks` ([]tencentCloudDataDisk) - Add one or more data disks to the instance before creating the image.
   Note that if the source image has data disk snapshots, this argument
@@ -63,6 +65,8 @@
 - `user_data_file` (string) - userdata file.
 
 - `host_name` (string) - host name.
+
+- `cam_role_name` (string) - CAM role name.
 
 - `run_tags` (map[string]string) - Key/value pair tags to apply to the instance that is *launched* to
   create the image. These tags are *not* applied to the resulting image.

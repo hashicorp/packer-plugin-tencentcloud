@@ -47,6 +47,8 @@ type TencentCloudRunConfig struct {
 	// for parameter taking.
 	DiskType string `mapstructure:"disk_type" required:"false"`
 	// Root disk size your cvm will be launched by. values range(in GB):
+	// - LOCAL_BASIC: 50
+	// - Other: 50 ~ 1000 (need whitelist if > 50)
 	DiskSize int64 `mapstructure:"disk_size" required:"false"`
 	// Add one or more data disks to the instance before creating the image.
 	// Note that if the source image has data disk snapshots, this argument
@@ -92,6 +94,8 @@ type TencentCloudRunConfig struct {
 	UserDataFile string `mapstructure:"user_data_file" required:"false"`
 	// host name.
 	HostName string `mapstructure:"host_name" required:"false"`
+	// CAM role name.
+	CamRoleName string `mapstructure:"cam_role_name" required:"false"`
 	// Key/value pair tags to apply to the instance that is *launched* to
 	// create the image. These tags are *not* applied to the resulting image.
 	RunTags map[string]string `mapstructure:"run_tags" required:"false"`

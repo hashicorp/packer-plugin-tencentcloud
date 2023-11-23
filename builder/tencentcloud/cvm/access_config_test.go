@@ -32,3 +32,20 @@ func TestTencentCloudAccessConfig_Prepare(t *testing.T) {
 		t.Fatalf("shouldn't raise error: %v", err)
 	}
 }
+
+func TestTencentCloudAccessConfig_Profile(t *testing.T) {
+	cf := TencentCloudAccessConfig{
+		Region: "ap-guangzhou",
+	}
+
+	err := cf.Prepare(nil)
+	if err == nil {
+		t.Fatal("should raise error: aksk not set")
+	}
+
+	if cf.Profile != DEFAULT_PROFILE {
+		t.Fatal("should raise error: default value should be set")
+	}
+}
+
+

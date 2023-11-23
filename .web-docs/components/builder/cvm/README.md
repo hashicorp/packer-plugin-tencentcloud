@@ -12,99 +12,164 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 ### Required:
 
+<!-- Code generated from the comments of the TencentCloudAccessConfig struct in builder/tencentcloud/cvm/access_config.go; DO NOT EDIT MANUALLY -->
+
 - `secret_id` (string) - Tencentcloud secret id. You should set it directly,
-  or set the `TENCENTCLOUD_SECRET_ID` environment variable.
+  or set the TENCENTCLOUD_SECRET_ID environment variable.
 
 - `secret_key` (string) - Tencentcloud secret key. You should set it directly,
-  or set the `TENCENTCLOUD_SECRET_KEY` environment variable.
+  or set the TENCENTCLOUD_SECRET_KEY environment variable.
 
 - `region` (string) - The region where your cvm will be launch. You should
-  reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
-  for parameter taking.
+  reference Region and Zone
+   for parameter taking.
 
 - `zone` (string) - The zone where your cvm will be launch. You should
-  reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
-  for parameter taking.
+  reference Region and Zone
+   for parameter taking.
+
+<!-- End of code generated from the comments of the TencentCloudAccessConfig struct in builder/tencentcloud/cvm/access_config.go; -->
+
+
+<!-- Code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; DO NOT EDIT MANUALLY -->
 
 - `instance_type` (string) - The instance type your cvm will be launched by.
-  You should reference [Instance Type](https://intl.cloud.tencent.com/document/product/213/11518)
-  for parameter taking.
+  You should reference Instace Type
+   for parameter taking.
 
-- `source_image_id` (string) - The base image id of Image you want to create
-  your customized image from.
+<!-- End of code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; -->
+
+
+<!-- Code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; DO NOT EDIT MANUALLY -->
 
 - `image_name` (string) - The name you want to create your customize image,
   it should be composed of no more than 60 characters, of letters, numbers
   or minus sign.
 
+<!-- End of code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; -->
+
+
 ### Optional:
 
-- `force_poweroff` (boolean) - Indicates whether to perform a forced shutdown to
-  create an image when soft shutdown fails. Default value is `false`.
+<!-- Code generated from the comments of the TencentCloudAccessConfig struct in builder/tencentcloud/cvm/access_config.go; DO NOT EDIT MANUALLY -->
 
-- `image_description` (string) - Image description. It should no more than 60 characters.
+- `cvm_endpoint` (string) - The endpoint you want to reach the cloud endpoint,
+  if tce cloud you should set a tce cvm endpoint.
 
-- `reboot` (boolean, **deprecated**) - Whether shutdown cvm to create Image.
-  Please refer to parameter `force_poweroff`.
+- `vpc_endpoint` (string) - The endpoint you want to reach the cloud endpoint,
+  if tce cloud you should set a tce vpc endpoint.
 
-- `sysprep` (boolean) - Whether enable Sysprep during creating windows image.
+- `security_token` (string) - STS access token, can be set through template or by exporting
+  as environment variable such as `export SECURITY_TOKEN=value`.
 
-- `image_copy_regions` (array of strings) - Regions that will be copied to after
+- `assume_role` (TencentCloudAccessRole) - The `assume_role` block.
+  If provided, terraform will attempt to assume this role using the supplied credentials.
+  - `role_arn` (string) - The ARN of the role to assume.
+    It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.
+  - `session_name` (string) - The session name to use when making the AssumeRole call.
+    It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_NAME`.
+  - `session_duration` (int) - The duration of the session when making the AssumeRole call.
+    Its value ranges from 0 to 43200(seconds), and default is 7200 seconds.
+    It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.
+
+- `profile` (string) - The profile name as set in the shared credentials.
+  It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable.
+  If not set, the default profile created with `tccli configure` will be used.
+  If not set this defaults to `default`.
+
+- `shared_credentials_dir` (string) - The directory of the shared credentials.
+  It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
+  If not set this defaults to `~/.tccli`.
+
+<!-- End of code generated from the comments of the TencentCloudAccessConfig struct in builder/tencentcloud/cvm/access_config.go; -->
+
+
+<!-- Code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; DO NOT EDIT MANUALLY -->
+
+- `image_description` (string) - Image description.
+
+- `reboot` (bool) - Whether shutdown cvm to create Image. Default value is
+  false.
+
+- `force_poweroff` (bool) - Whether to force power off cvm when create image.
+  Default value is false.
+
+- `sysprep` (bool) - Whether enable Sysprep during creating windows image.
+
+- `image_force_delete` (bool) - Image Force Delete
+
+- `image_copy_regions` ([]string) - regions that will be copied to after
   your image created.
 
-- `image_share_accounts` (array of strings) - Accounts that will be shared to
+- `image_share_accounts` ([]string) - accounts that will be shared to
   after your image created.
 
-- `skip_region_validation` (boolean) - Do not check region and zone when validate.
+- `image_tags` (map[string]string) - Key/value pair tags that will be applied to the resulting image.
 
-- `associate_public_ip_address` (boolean) - Whether allocate public ip to your cvm.
-  Default value is `false`.
+<!-- End of code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; -->
 
-  If not set, you could access your cvm from the same vpc.
 
-- `internet_max_bandwidth_out` (number) - Max bandwidth out your cvm will be launched by(in MB).
-  values can be set between 1 ~ 100.
+<!-- Code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; DO NOT EDIT MANUALLY -->
+
+- `associate_public_ip_address` (bool) - Whether allocate public ip to your cvm.
+  Default value is false.
+
+- `source_image_id` (string) - The base image id of Image you want to create
+  your customized image from.
+
+- `source_image_name` (string) - The base image name of Image you want to create your
+  customized image from.Conflict with SourceImageId.
+
+- `instance_charge_type` (string) - Charge type of cvm, values can be `POSTPAID_BY_HOUR` (default) `SPOTPAID`
 
 - `instance_name` (string) - Instance name.
 
 - `disk_type` (string) - Root disk type your cvm will be launched by, default is `CLOUD_PREMIUM`. you could
-  reference [Disk Type](https://intl.cloud.tencent.com/document/product/213/15753#SystemDisk)
+  reference Disk Type
   for parameter taking.
 
-- `disk_size` (number) - Root disk size your cvm will be launched by. values range(in GB):
-
+- `disk_size` (int64) - Root disk size your cvm will be launched by. values range(in GB):
   - LOCAL_BASIC: 50
   - Other: 50 ~ 1000 (need whitelist if > 50)
 
-- `data_disks` (array of data disks) - Add one or more data disks to the instance before creating the
-  image. Note that if the source image has data disk snapshots, this argument will be ignored, and
-  the running instance will use source image data disk settings, in such case, `disk_type`
-  argument will be used as disk type for all data disks, and each data disk size will use the
-  origin value in source image.
+- `data_disks` ([]tencentCloudDataDisk) - Add one or more data disks to the instance before creating the image.
+  Note that if the source image has data disk snapshots, this argument
+  will be ignored, and the running instance will use source image data
+  disk settings, in such case, `disk_type` argument will be used as disk
+  type for all data disks, and each data disk size will use the origin
+  value in source image.
   The data disks allow for the following argument:
-
-  - `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM` and `CLOUD_SSD`.
-  - `disk_size` - Size of the data disk.
-  - `disk_snapshot_id` - Id of the snapshot for a data disk.
+  -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM` and `CLOUD_SSD`.
+  -  `disk_size` - Size of the data disk.
+  -  `disk_snapshot_id` - Id of the snapshot for a data disk.
 
 - `vpc_id` (string) - Specify vpc your cvm will be launched by.
 
-- `vpc_name` (string) - Specify vpc name you will create. if `vpc_id` is not set, Packer will
+- `vpc_name` (string) - Specify vpc name you will create. if vpc_id is not set, packer will
   create a vpc for you named this parameter.
 
-- `cidr_block` (boolean) - Specify cider block of the vpc you will create if `vpc_id` is not set.
+- `vpc_ip` (string) - Vpc Ip
 
 - `subnet_id` (string) - Specify subnet your cvm will be launched by.
 
-- `subnet_name` (string) - Specify subnet name you will create. if `subnet_id` is not set, Packer will
+- `subnet_name` (string) - Specify subnet name you will create. if subnet_id is not set, packer will
   create a subnet for you named this parameter.
 
-- `subnect_cidr_block` (boolean) - Specify cider block of the subnet you will create if
-  `subnet_id` is not set.
+- `cidr_block` (string) - Specify cider block of the vpc you will create if vpc_id not set
 
-- `security_group_id` (string) - Specify security group your cvm will be launched by.
+- `subnect_cidr_block` (string) - Specify cider block of the subnet you will create if
+  subnet_id not set
 
-- `security_group_name` (string) - Specify security name you will create if `security_group_id` is not set.
+- `internet_charge_type` (string) - Internet charge type of cvm, values can be TRAFFIC_POSTPAID_BY_HOUR, BANDWIDTH_POSTPAID_BY_HOUR, BANDWIDTH_PACKAGE
+
+- `internet_max_bandwidth_out` (int64) - Max bandwidth out your cvm will be launched by(in MB).
+  values can be set between 1 ~ 100.
+
+- `bandwidth_package_id` (string) - When internet_charge_type is BANDWIDTH_PACKAGE, bandwidth_package_id is required
+
+- `security_group_id` (string) - Specify securitygroup your cvm will be launched by.
+
+- `security_group_name` (string) - Specify security name you will create if security_group_id not set.
 
 - `user_data` (string) - userdata.
 
@@ -112,14 +177,20 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `host_name` (string) - host name.
 
-- `run_tags` (map of strings) - Tags to apply to the instance that is _launched_ to create the image.
-  These tags are _not_ applied to the resulting image.
+- `cam_role_name` (string) - CAM role name.
 
-- `cvm_endpoint` (string) - The endpoint you want to reach the cloud endpoint,
-  if tce cloud you should set a tce cvm endpoint.
+- `run_tags` (map[string]string) - Key/value pair tags to apply to the instance that is *launched* to
+  create the image. These tags are *not* applied to the resulting image.
 
-- `vpc_endpoint` (string) - The endpoint you want to reach the cloud endpoint,
-  if tce cloud you should set a tce vpc endpoint.
+- `run_tag` ([]{key string, value string}) - Same as [`run_tags`](#run_tags) but defined as a singular repeatable
+  block containing a `key` and a `value` field. In HCL2 mode the
+  [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
+  will allow you to create those programatically.
+
+- `ssh_private_ip` (bool) - SSH Private Ip
+
+<!-- End of code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; -->
+
 
 ### Communicator Configuration
 

@@ -6,4 +6,26 @@
 - `vpc_endpoint` (string) - The endpoint you want to reach the cloud endpoint,
   if tce cloud you should set a tce vpc endpoint.
 
+- `security_token` (string) - STS access token, can be set through template or by exporting
+  as environment variable such as `export SECURITY_TOKEN=value`.
+
+- `assume_role` (TencentCloudAccessRole) - The `assume_role` block.
+  If provided, terraform will attempt to assume this role using the supplied credentials.
+  - `role_arn` (string) - The ARN of the role to assume.
+    It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.
+  - `session_name` (string) - The session name to use when making the AssumeRole call.
+    It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_NAME`.
+  - `session_duration` (int) - The duration of the session when making the AssumeRole call.
+    Its value ranges from 0 to 43200(seconds), and default is 7200 seconds.
+    It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.
+
+- `profile` (string) - The profile name as set in the shared credentials.
+  It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable.
+  If not set, the default profile created with `tccli configure` will be used.
+  If not set this defaults to `default`.
+
+- `shared_credentials_dir` (string) - The directory of the shared credentials.
+  It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
+  If not set this defaults to `~/.tccli`.
+
 <!-- End of code generated from the comments of the TencentCloudAccessConfig struct in builder/tencentcloud/cvm/access_config.go; -->

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 //go:generate packer-sdc struct-markdown
+//go:generate packer-sdc mapstructure-to-hcl2 -type TencentCloudAccessRole
 
 package cvm
 
@@ -31,7 +32,6 @@ const (
 	PACKER_ASSUME_ROLE_SESSION_DURATION = "TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION"
 	PACKER_PROFILE                      = "TENCENTCLOUD_PROFILE"
 	PACKER_SHARED_CREDENTIALS_DIR       = "TENCENTCLOUD_SHARED_CREDENTIALS_DIR"
-	DEFAULT_REGION                      = "ap-guangzhou"
 	DEFAULT_PROFILE                     = "default"
 )
 
@@ -99,6 +99,28 @@ type TencentCloudAccessConfig struct {
 	// STS access token, can be set through template or by exporting
 	// as environment variable such as `export SECURITY_TOKEN=value`.
 	SecurityToken string `mapstructure:"security_token" required:"false"`
+	// The `assume_role` block. 
+	// If provided, terraform will attempt to assume this role using the supplied credentials.
+	// - `role_arn` (string) - The ARN of the role to assume.
+	//   It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.
+	// - `session_name` (string) - The session name to use when making the AssumeRole call.
+	//   It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_NAME`.
+	// - `session_duration` (int) - The duration of the session when making the AssumeRole call.
+	//   Its value ranges from 0 to 43200(seconds), and default is 7200 seconds.
+	//   It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.
+	AssumeRole TencentCloudAccessRole `mapstructure:"assume_role" required:"false"`
+	// The profile name as set in the shared credentials.
+	// It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable.
+	// If not set, the default profile created with `tccli configure` will be used.
+	// If not set this defaults to `default`.
+	Profile string `mapstructure:"profile" required:"false"`
+	// The directory of the shared credentials.
+	// It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
+	// If not set this defaults to `~/.tccli`.
+	SharedCredentialsDir string `mapstructure:"shared_credentials_dir" required:"false"`
+}
+
+type TencentCloudAccessRole struct {
 	// The ARN of the role to assume.
 	// It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.
 	RoleArn string `mapstructure:"role_arn" required:"false"`
@@ -107,16 +129,8 @@ type TencentCloudAccessConfig struct {
 	SessionName string `mapstructure:"session_name" required:"false"`
 	// The duration of the session when making the AssumeRole call.
 	// Its value ranges from 0 to 43200(seconds), and default is 7200 seconds.
-	// It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.",
+	// It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_SESSION_DURATION`.
 	SessionDuration int `mapstructure:"session_duration" required:"false"`
-	// The profile name as set in the shared credentials.
-	// It can also be sourced from the `TENCENTCLOUD_PROFILE` environment variable.
-	// If not set, the default profile created with `tccli configure` will be used.
-	// If not set this defaults to ~/.tccli.
-	Profile string `mapstructure:"profile" required:"false"`
-	// The directory of the shared credentials.
-	// It can also be sourced from the `TENCENTCLOUD_SHARED_CREDENTIALS_DIR` environment variable.
-	SharedCredentialsDir string `mapstructure:"shared_credentials_dir" required:"false"`
 }
 
 func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
@@ -206,30 +220,35 @@ func (cf *TencentCloudAccessConfig) Config() error {
 		cf.SharedCredentialsDir = os.Getenv(PACKER_SHARED_CREDENTIALS_DIR)
 	}
 
-	if (cf.SecretId == "" || cf.SecretKey == "") && cf.Profile == "" {
-		return fmt.Errorf("parameter secret_id and secret_key must be set or a profile must be set")
+	if cf.AssumeRole.RoleArn == "" {
+		cf.AssumeRole.RoleArn = os.Getenv(PACKER_ASSUME_ROLE_ARN)
 	}
 
-	if cf.RoleArn == "" {
-		cf.RoleArn = os.Getenv(PACKER_ASSUME_ROLE_ARN)
+	if cf.AssumeRole.SessionName == "" {
+		cf.AssumeRole.SessionName = os.Getenv(PACKER_ASSUME_ROLE_SESSION_NAME)
 	}
 
-	if cf.SessionName == "" {
-		cf.SessionName = os.Getenv(PACKER_ASSUME_ROLE_SESSION_NAME)
-	}
-
-	if cf.SessionDuration == 0 {
+	if cf.AssumeRole.SessionDuration == 0 {
 		duration := os.Getenv(PACKER_ASSUME_ROLE_SESSION_DURATION)
 		if duration != "" {
 			durationInt, err := strconv.Atoi(duration)
 			if err != nil {
 				return err
 			}
-			cf.SessionDuration = durationInt
+			cf.AssumeRole.SessionDuration = durationInt
 		}
 	}
 
-	if (cf.SecretId == "" || cf.SecretKey == "") && cf.Profile != "" {
+	if cf.Profile == "" {
+		cf.Profile = DEFAULT_PROFILE
+	}
+
+	if cf.SecretId == "" || cf.SecretKey == "" {
+		_, err := getConfigFromProfile(cf, "region")
+		if err != nil {
+			return err
+		}
+
 		var getProviderConfig = func(str string, key string) string {
 			value, err := getConfigFromProfile(cf, key)
 			if err == nil && value != nil {
@@ -253,7 +272,7 @@ func (cf *TencentCloudAccessConfig) Config() error {
 	}
 
 	if cf.SecretId == "" || cf.SecretKey == "" {
-		return fmt.Errorf("secret_id and secret_key not found in profile, parameter secret_id and secret_key must be set, cf:%+v", cf)
+		return fmt.Errorf("secret_id and secret_key not found in profile, parameter secret_id and secret_key must be set")
 	}
 
 	return nil

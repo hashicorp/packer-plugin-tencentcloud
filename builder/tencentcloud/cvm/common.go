@@ -258,34 +258,34 @@ func packerConfigClient(cf *TencentCloudAccessConfig) (*TencentCloudClient, erro
 		ClientProfile: clientProfile,
 	}
 
-	if cf.RoleArn != "" && cf.SessionName != "" {
-		if cf.SessionDuration == 0 {
-			cf.SessionDuration = 7200
+	if cf.AssumeRole.RoleArn != "" && cf.AssumeRole.SessionName != "" {
+		if cf.AssumeRole.SessionDuration == 0 {
+			cf.AssumeRole.SessionDuration = 7200
 		}
-		err = genClientWithSTS(apiV3Conn, cf.RoleArn, cf.SessionName, cf.SessionDuration, "")
+		err = genClientWithSTS(apiV3Conn, cf.AssumeRole.RoleArn, cf.AssumeRole.SessionName, cf.AssumeRole.SessionDuration, "")
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if cf.RoleArn == "" && packerConfig["role-arn"] != nil {
-		cf.RoleArn = packerConfig["role-arn"].(string)
+	if cf.AssumeRole.RoleArn == "" && packerConfig["role-arn"] != nil {
+		cf.AssumeRole.RoleArn = packerConfig["role-arn"].(string)
 	}
 
-	if cf.SessionName == "" && packerConfig["role-session-name"] != nil {
-		cf.SessionName = packerConfig["role-session-name"].(string)
+	if cf.AssumeRole.SessionName == "" && packerConfig["role-session-name"] != nil {
+		cf.AssumeRole.SessionName = packerConfig["role-session-name"].(string)
 	}
 
-	if cf.SessionDuration == 0 && packerConfig["role-session-duration"] != nil {
-		cf.SessionDuration = packerConfig["role-session-duration"].(int)
+	if cf.AssumeRole.SessionDuration == 0 && packerConfig["role-session-duration"] != nil {
+		cf.AssumeRole.SessionDuration = packerConfig["role-session-duration"].(int)
 	}
 
-	if cf.RoleArn != "" && cf.SessionName != "" {
-		if cf.SessionDuration == 0 {
-			cf.SessionDuration = 7200
+	if cf.AssumeRole.RoleArn != "" && cf.AssumeRole.SessionName != "" {
+		if cf.AssumeRole.SessionDuration == 0 {
+			cf.AssumeRole.SessionDuration = 7200
 		}
 
-		err = genClientWithSTS(apiV3Conn, cf.RoleArn, cf.SessionName, cf.SessionDuration, "")
+		err = genClientWithSTS(apiV3Conn, cf.AssumeRole.RoleArn, cf.AssumeRole.SessionName, cf.AssumeRole.SessionDuration, "")
 		if err != nil {
 			return nil, err
 		}
