@@ -37,8 +37,8 @@ type TencentCloudRunConfig struct {
 	// Charge type of cvm, values can be `POSTPAID_BY_HOUR` (default) `SPOTPAID`
 	InstanceChargeType string `mapstructure:"instance_charge_type" required:"false"`
 	// The instance type your cvm will be launched by.
-	// You should reference Instace Type
-	//  for parameter taking.
+	// You should reference [Instance Type](https://intl.cloud.tencent.com/document/product/213/11518)
+	// for parameter taking.
 	InstanceType string `mapstructure:"instance_type" required:"true"`
 	// Instance name.
 	InstanceName string `mapstructure:"instance_name" required:"false"`

@@ -74,18 +74,18 @@ var packerConfig map[string]interface{}
 
 type TencentCloudAccessConfig struct {
 	// Tencentcloud secret id. You should set it directly,
-	// or set the TENCENTCLOUD_SECRET_ID environment variable.
+	// or set the `TENCENTCLOUD_SECRET_ID` environment variable.
 	SecretId string `mapstructure:"secret_id" required:"true"`
 	// Tencentcloud secret key. You should set it directly,
-	// or set the TENCENTCLOUD_SECRET_KEY environment variable.
+	// or set the `TENCENTCLOUD_SECRET_KEY` environment variable.
 	SecretKey string `mapstructure:"secret_key" required:"true"`
 	// The region where your cvm will be launch. You should
-	// reference Region and Zone
-	//  for parameter taking.
+	// reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
+	// for parameter taking.
 	Region string `mapstructure:"region" required:"true"`
 	// The zone where your cvm will be launch. You should
-	// reference Region and Zone
-	//  for parameter taking.
+	// reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
+	// for parameter taking.
 	Zone string `mapstructure:"zone" required:"true"`
 	// The endpoint you want to reach the cloud endpoint,
 	// if tce cloud you should set a tce cvm endpoint.
@@ -99,7 +99,7 @@ type TencentCloudAccessConfig struct {
 	// STS access token, can be set through template or by exporting
 	// as environment variable such as `export SECURITY_TOKEN=value`.
 	SecurityToken string `mapstructure:"security_token" required:"false"`
-	// The `assume_role` block. 
+	// The `assume_role` block.
 	// If provided, terraform will attempt to assume this role using the supplied credentials.
 	// - `role_arn` (string) - The ARN of the role to assume.
 	//   It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.
@@ -256,7 +256,7 @@ func (cf *TencentCloudAccessConfig) Config() error {
 			}
 			return str
 		}
-	
+
 		if cf.SecretId == "" {
 			cf.SecretId = getProviderConfig(cf.SecretId, "secretId")
 		}

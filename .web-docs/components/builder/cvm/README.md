@@ -15,18 +15,18 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 <!-- Code generated from the comments of the TencentCloudAccessConfig struct in builder/tencentcloud/cvm/access_config.go; DO NOT EDIT MANUALLY -->
 
 - `secret_id` (string) - Tencentcloud secret id. You should set it directly,
-  or set the TENCENTCLOUD_SECRET_ID environment variable.
+  or set the `TENCENTCLOUD_SECRET_ID` environment variable.
 
 - `secret_key` (string) - Tencentcloud secret key. You should set it directly,
-  or set the TENCENTCLOUD_SECRET_KEY environment variable.
+  or set the `TENCENTCLOUD_SECRET_KEY` environment variable.
 
 - `region` (string) - The region where your cvm will be launch. You should
-  reference Region and Zone
-   for parameter taking.
+  reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
+  for parameter taking.
 
 - `zone` (string) - The zone where your cvm will be launch. You should
-  reference Region and Zone
-   for parameter taking.
+  reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
+  for parameter taking.
 
 <!-- End of code generated from the comments of the TencentCloudAccessConfig struct in builder/tencentcloud/cvm/access_config.go; -->
 
@@ -34,8 +34,8 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 <!-- Code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; DO NOT EDIT MANUALLY -->
 
 - `instance_type` (string) - The instance type your cvm will be launched by.
-  You should reference Instace Type
-   for parameter taking.
+  You should reference [Instance Type](https://intl.cloud.tencent.com/document/product/213/11518)
+  for parameter taking.
 
 <!-- End of code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; -->
 

@@ -47,5 +47,3 @@ func TestTencentCloudAccessConfig_Profile(t *testing.T) {
 		t.Fatal("should raise error: default value should be set")
 	}
 }
-
-
