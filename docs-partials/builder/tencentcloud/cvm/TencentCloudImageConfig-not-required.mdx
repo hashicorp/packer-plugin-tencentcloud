@@ -1,12 +1,12 @@
 <!-- Code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; DO NOT EDIT MANUALLY -->
 
-- `image_description` (string) - Image description.
+- `image_description` (string) - Image description. It should no more than 60 characters.
 
-- `reboot` (bool) - Whether shutdown cvm to create Image. Default value is
-  false.
+- `reboot` (bool) - Whether shutdown cvm to create Image.
+  Please refer to parameter `force_poweroff`
 
-- `force_poweroff` (bool) - Whether to force power off cvm when create image.
-  Default value is false.
+- `force_poweroff` (bool) - Indicates whether to perform a forced shutdown to
+  create an image when soft shutdown fails. Default value is `false`.
 
 - `sysprep` (bool) - Whether enable Sysprep during creating windows image.
 

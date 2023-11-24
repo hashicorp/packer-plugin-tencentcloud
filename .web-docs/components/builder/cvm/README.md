@@ -86,13 +86,13 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 <!-- Code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; DO NOT EDIT MANUALLY -->
 
-- `image_description` (string) - Image description.
+- `image_description` (string) - Image description. It should no more than 60 characters.
 
-- `reboot` (bool) - Whether shutdown cvm to create Image. Default value is
-  false.
+- `reboot` (bool) - Whether shutdown cvm to create Image.
+  Please refer to parameter `force_poweroff`
 
-- `force_poweroff` (bool) - Whether to force power off cvm when create image.
-  Default value is false.
+- `force_poweroff` (bool) - Indicates whether to perform a forced shutdown to
+  create an image when soft shutdown fails. Default value is `false`.
 
 - `sysprep` (bool) - Whether enable Sysprep during creating windows image.
 
@@ -112,7 +112,7 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 <!-- Code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; DO NOT EDIT MANUALLY -->
 
 - `associate_public_ip_address` (bool) - Whether allocate public ip to your cvm.
-  Default value is false.
+  Default value is `false`.
 
 - `source_image_id` (string) - The base image id of Image you want to create
   your customized image from.
@@ -125,7 +125,7 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 - `instance_name` (string) - Instance name.
 
 - `disk_type` (string) - Root disk type your cvm will be launched by, default is `CLOUD_PREMIUM`. you could
-  reference Disk Type
+  reference [Disk Type](https://intl.cloud.tencent.com/document/product/213/15753#SystemDisk)
   for parameter taking.
 
 - `disk_size` (int64) - Root disk size your cvm will be launched by. values range(in GB):
@@ -145,14 +145,14 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `vpc_id` (string) - Specify vpc your cvm will be launched by.
 
-- `vpc_name` (string) - Specify vpc name you will create. if vpc_id is not set, packer will
+- `vpc_name` (string) - Specify vpc name you will create. if `vpc_id` is not set, Packer will
   create a vpc for you named this parameter.
 
 - `vpc_ip` (string) - Vpc Ip
 
 - `subnet_id` (string) - Specify subnet your cvm will be launched by.
 
-- `subnet_name` (string) - Specify subnet name you will create. if subnet_id is not set, packer will
+- `subnet_name` (string) - Specify subnet name you will create. if `subnet_id` is not set, Packer will
   create a subnet for you named this parameter.
 
 - `cidr_block` (string) - Specify cider block of the vpc you will create if vpc_id not set
@@ -179,8 +179,8 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `cam_role_name` (string) - CAM role name.
 
-- `run_tags` (map[string]string) - Key/value pair tags to apply to the instance that is *launched* to
-  create the image. These tags are *not* applied to the resulting image.
+- `run_tags` (map[string]string) - Tags to apply to the instance that is _launched_ to create the image.
+  These tags are _not_ applied to the resulting image.
 
 - `run_tag` ([]{key string, value string}) - Same as [`run_tags`](#run_tags) but defined as a singular repeatable
   block containing a `key` and a `value` field. In HCL2 mode the
