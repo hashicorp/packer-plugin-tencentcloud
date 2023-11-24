@@ -42,7 +42,6 @@ type TencentCloudImageConfig struct {
 func (cf *TencentCloudImageConfig) Prepare(ctx *interpolate.Context) []error {
 	var errs []error
 
-	cf.ForcePoweroff = true
 	if cf.ImageName == "" {
 		errs = append(errs, fmt.Errorf("image_name must be specified"))
 	} else if utf8.RuneCountInString(cf.ImageName) > 60 {
