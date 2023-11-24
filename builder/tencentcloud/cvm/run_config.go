@@ -66,7 +66,6 @@ type TencentCloudRunConfig struct {
 	// Specify vpc name you will create. if `vpc_id` is not set, Packer will
 	// create a vpc for you named this parameter.
 	VpcName string `mapstructure:"vpc_name" required:"false"`
-	VpcIp   string `mapstructure:"vpc_ip"`
 	// Specify subnet your cvm will be launched by.
 	SubnetId string `mapstructure:"subnet_id" required:"false"`
 	// Specify subnet name you will create. if `subnet_id` is not set, Packer will

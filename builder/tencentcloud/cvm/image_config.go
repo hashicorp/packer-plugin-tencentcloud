@@ -19,15 +19,11 @@ type TencentCloudImageConfig struct {
 	ImageName string `mapstructure:"image_name" required:"true"`
 	// Image description. It should no more than 60 characters.
 	ImageDescription string `mapstructure:"image_description" required:"false"`
-	// Whether shutdown cvm to create Image.
-  	// Please refer to parameter `force_poweroff`
-	Reboot bool `mapstructure:"reboot" required:"false"`
 	// Indicates whether to perform a forced shutdown to
   	// create an image when soft shutdown fails. Default value is `false`.
 	ForcePoweroff bool `mapstructure:"force_poweroff" required:"false"`
 	// Whether enable Sysprep during creating windows image.
 	Sysprep          bool `mapstructure:"sysprep" required:"false"`
-	ImageForceDelete bool `mapstructure:"image_force_delete"`
 	// regions that will be copied to after
 	// your image created.
 	ImageCopyRegions []string `mapstructure:"image_copy_regions" required:"false"`

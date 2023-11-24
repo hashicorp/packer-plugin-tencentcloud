@@ -31,10 +31,8 @@ type FlatConfig struct {
 	SharedCredentialsDir      *string                     `mapstructure:"shared_credentials_dir" required:"false" cty:"shared_credentials_dir" hcl:"shared_credentials_dir"`
 	ImageName                 *string                     `mapstructure:"image_name" required:"true" cty:"image_name" hcl:"image_name"`
 	ImageDescription          *string                     `mapstructure:"image_description" required:"false" cty:"image_description" hcl:"image_description"`
-	Reboot                    *bool                       `mapstructure:"reboot" required:"false" cty:"reboot" hcl:"reboot"`
 	ForcePoweroff             *bool                       `mapstructure:"force_poweroff" required:"false" cty:"force_poweroff" hcl:"force_poweroff"`
 	Sysprep                   *bool                       `mapstructure:"sysprep" required:"false" cty:"sysprep" hcl:"sysprep"`
-	ImageForceDelete          *bool                       `mapstructure:"image_force_delete" cty:"image_force_delete" hcl:"image_force_delete"`
 	ImageCopyRegions          []string                    `mapstructure:"image_copy_regions" required:"false" cty:"image_copy_regions" hcl:"image_copy_regions"`
 	ImageShareAccounts        []string                    `mapstructure:"image_share_accounts" required:"false" cty:"image_share_accounts" hcl:"image_share_accounts"`
 	ImageTags                 map[string]string           `mapstructure:"image_tags" required:"false" cty:"image_tags" hcl:"image_tags"`
@@ -49,7 +47,6 @@ type FlatConfig struct {
 	DataDisks                 []FlattencentCloudDataDisk  `mapstructure:"data_disks" cty:"data_disks" hcl:"data_disks"`
 	VpcId                     *string                     `mapstructure:"vpc_id" required:"false" cty:"vpc_id" hcl:"vpc_id"`
 	VpcName                   *string                     `mapstructure:"vpc_name" required:"false" cty:"vpc_name" hcl:"vpc_name"`
-	VpcIp                     *string                     `mapstructure:"vpc_ip" cty:"vpc_ip" hcl:"vpc_ip"`
 	SubnetId                  *string                     `mapstructure:"subnet_id" required:"false" cty:"subnet_id" hcl:"subnet_id"`
 	SubnetName                *string                     `mapstructure:"subnet_name" required:"false" cty:"subnet_name" hcl:"subnet_name"`
 	CidrBlock                 *string                     `mapstructure:"cidr_block" required:"false" cty:"cidr_block" hcl:"cidr_block"`
@@ -150,10 +147,8 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"shared_credentials_dir":       &hcldec.AttrSpec{Name: "shared_credentials_dir", Type: cty.String, Required: false},
 		"image_name":                   &hcldec.AttrSpec{Name: "image_name", Type: cty.String, Required: false},
 		"image_description":            &hcldec.AttrSpec{Name: "image_description", Type: cty.String, Required: false},
-		"reboot":                       &hcldec.AttrSpec{Name: "reboot", Type: cty.Bool, Required: false},
 		"force_poweroff":               &hcldec.AttrSpec{Name: "force_poweroff", Type: cty.Bool, Required: false},
 		"sysprep":                      &hcldec.AttrSpec{Name: "sysprep", Type: cty.Bool, Required: false},
-		"image_force_delete":           &hcldec.AttrSpec{Name: "image_force_delete", Type: cty.Bool, Required: false},
 		"image_copy_regions":           &hcldec.AttrSpec{Name: "image_copy_regions", Type: cty.List(cty.String), Required: false},
 		"image_share_accounts":         &hcldec.AttrSpec{Name: "image_share_accounts", Type: cty.List(cty.String), Required: false},
 		"image_tags":                   &hcldec.AttrSpec{Name: "image_tags", Type: cty.Map(cty.String), Required: false},
@@ -168,7 +163,6 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"data_disks":                   &hcldec.BlockListSpec{TypeName: "data_disks", Nested: hcldec.ObjectSpec((*FlattencentCloudDataDisk)(nil).HCL2Spec())},
 		"vpc_id":                       &hcldec.AttrSpec{Name: "vpc_id", Type: cty.String, Required: false},
 		"vpc_name":                     &hcldec.AttrSpec{Name: "vpc_name", Type: cty.String, Required: false},
-		"vpc_ip":                       &hcldec.AttrSpec{Name: "vpc_ip", Type: cty.String, Required: false},
 		"subnet_id":                    &hcldec.AttrSpec{Name: "subnet_id", Type: cty.String, Required: false},
 		"subnet_name":                  &hcldec.AttrSpec{Name: "subnet_name", Type: cty.String, Required: false},
 		"cidr_block":                   &hcldec.AttrSpec{Name: "cidr_block", Type: cty.String, Required: false},

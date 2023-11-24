@@ -88,15 +88,10 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `image_description` (string) - Image description. It should no more than 60 characters.
 
-- `reboot` (bool) - Whether shutdown cvm to create Image.
-  Please refer to parameter `force_poweroff`
-
 - `force_poweroff` (bool) - Indicates whether to perform a forced shutdown to
   create an image when soft shutdown fails. Default value is `false`.
 
 - `sysprep` (bool) - Whether enable Sysprep during creating windows image.
-
-- `image_force_delete` (bool) - Image Force Delete
 
 - `image_copy_regions` ([]string) - regions that will be copied to after
   your image created.
@@ -147,8 +142,6 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `vpc_name` (string) - Specify vpc name you will create. if `vpc_id` is not set, Packer will
   create a vpc for you named this parameter.
-
-- `vpc_ip` (string) - Vpc Ip
 
 - `subnet_id` (string) - Specify subnet your cvm will be launched by.
 
