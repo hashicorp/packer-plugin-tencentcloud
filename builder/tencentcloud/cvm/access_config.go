@@ -100,7 +100,7 @@ type TencentCloudAccessConfig struct {
 	// as environment variable such as `export SECURITY_TOKEN=value`.
 	SecurityToken string `mapstructure:"security_token" required:"false"`
 	// The `assume_role` block.
-	// If provided, terraform will attempt to assume this role using the supplied credentials.
+	// If provided, packer will attempt to assume this role using the supplied credentials.
 	// - `role_arn` (string) - The ARN of the role to assume.
 	//   It can be sourced from the `TENCENTCLOUD_ASSUME_ROLE_ARN`.
 	// - `session_name` (string) - The session name to use when making the AssumeRole call.
