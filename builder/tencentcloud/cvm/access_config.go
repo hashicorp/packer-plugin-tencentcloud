@@ -97,7 +97,7 @@ type TencentCloudAccessConfig struct {
 	// value is false.
 	skipValidation bool
 	// STS access token, can be set through template or by exporting
-	// as environment variable such as `export SECURITY_TOKEN=value`.
+	// as environment variable such as `export TENCENTCLOUD_SECURITY_TOKEN=value`.
 	SecurityToken string `mapstructure:"security_token" required:"false"`
 	// The `assume_role` block.
 	// If provided, packer will attempt to assume this role using the supplied credentials.
@@ -214,6 +214,10 @@ func (cf *TencentCloudAccessConfig) Config() error {
 
 	if cf.Profile == "" {
 		cf.Profile = os.Getenv(PACKER_PROFILE)
+	}
+
+	if cf.SecurityToken != "" {
+		cf.SecurityToken = os.Getenv(PACKER_SECURITY_TOKEN)
 	}
 
 	if cf.SharedCredentialsDir == "" {

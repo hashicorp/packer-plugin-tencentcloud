@@ -60,7 +60,7 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
   if tce cloud you should set a tce vpc endpoint.
 
 - `security_token` (string) - STS access token, can be set through template or by exporting
-  as environment variable such as `export SECURITY_TOKEN=value`.
+  as environment variable such as `export TENCENTCLOUD_SECURITY_TOKEN=value`.
 
 - `assume_role` (TencentCloudAccessRole) - The `assume_role` block.
   If provided, packer will attempt to assume this role using the supplied credentials.
