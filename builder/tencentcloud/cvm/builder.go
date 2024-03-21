@@ -130,6 +130,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			InternetMaxBandwidthOut:  b.config.InternetMaxBandwidthOut,
 			BandwidthPackageId:       b.config.BandwidthPackageId,
 			AssociatePublicIpAddress: b.config.AssociatePublicIpAddress,
+			CamRoleName:              b.config.CamRoleName,
 			Tags:                     b.config.RunTags,
 		},
 		&communicator.StepConnect{

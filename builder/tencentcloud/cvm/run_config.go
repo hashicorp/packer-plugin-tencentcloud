@@ -26,7 +26,7 @@ type tencentCloudDataDisk struct {
 
 type TencentCloudRunConfig struct {
 	// Whether allocate public ip to your cvm.
-	// Default value is false.
+	// Default value is `false`.
 	AssociatePublicIpAddress bool `mapstructure:"associate_public_ip_address" required:"false"`
 	// The base image id of Image you want to create
 	// your customized image from.
@@ -37,16 +37,18 @@ type TencentCloudRunConfig struct {
 	// Charge type of cvm, values can be `POSTPAID_BY_HOUR` (default) `SPOTPAID`
 	InstanceChargeType string `mapstructure:"instance_charge_type" required:"false"`
 	// The instance type your cvm will be launched by.
-	// You should reference Instace Type
-	//  for parameter taking.
+	// You should reference [Instance Type](https://intl.cloud.tencent.com/document/product/213/11518)
+	// for parameter taking.
 	InstanceType string `mapstructure:"instance_type" required:"true"`
 	// Instance name.
 	InstanceName string `mapstructure:"instance_name" required:"false"`
 	// Root disk type your cvm will be launched by, default is `CLOUD_PREMIUM`. you could
-	// reference Disk Type
+	// reference [Disk Type](https://intl.cloud.tencent.com/document/product/213/15753#SystemDisk)
 	// for parameter taking.
 	DiskType string `mapstructure:"disk_type" required:"false"`
 	// Root disk size your cvm will be launched by. values range(in GB):
+	// - LOCAL_BASIC: 50
+	// - Other: 50 ~ 1000 (need whitelist if > 50)
 	DiskSize int64 `mapstructure:"disk_size" required:"false"`
 	// Add one or more data disks to the instance before creating the image.
 	// Note that if the source image has data disk snapshots, this argument
@@ -61,13 +63,12 @@ type TencentCloudRunConfig struct {
 	DataDisks []tencentCloudDataDisk `mapstructure:"data_disks"`
 	// Specify vpc your cvm will be launched by.
 	VpcId string `mapstructure:"vpc_id" required:"false"`
-	// Specify vpc name you will create. if vpc_id is not set, packer will
+	// Specify vpc name you will create. if `vpc_id` is not set, Packer will
 	// create a vpc for you named this parameter.
 	VpcName string `mapstructure:"vpc_name" required:"false"`
-	VpcIp   string `mapstructure:"vpc_ip"`
 	// Specify subnet your cvm will be launched by.
 	SubnetId string `mapstructure:"subnet_id" required:"false"`
-	// Specify subnet name you will create. if subnet_id is not set, packer will
+	// Specify subnet name you will create. if `subnet_id` is not set, Packer will
 	// create a subnet for you named this parameter.
 	SubnetName string `mapstructure:"subnet_name" required:"false"`
 	// Specify cider block of the vpc you will create if vpc_id not set
@@ -92,8 +93,10 @@ type TencentCloudRunConfig struct {
 	UserDataFile string `mapstructure:"user_data_file" required:"false"`
 	// host name.
 	HostName string `mapstructure:"host_name" required:"false"`
-	// Key/value pair tags to apply to the instance that is *launched* to
-	// create the image. These tags are *not* applied to the resulting image.
+	// CAM role name.
+	CamRoleName string `mapstructure:"cam_role_name" required:"false"`
+	// Tags to apply to the instance that is _launched_ to create the image.
+	// These tags are _not_ applied to the resulting image.
 	RunTags map[string]string `mapstructure:"run_tags" required:"false"`
 	// Same as [`run_tags`](#run_tags) but defined as a singular repeatable
 	// block containing a `key` and a `value` field. In HCL2 mode the

@@ -28,6 +28,7 @@ type stepRunInstance struct {
 	InternetChargeType       string
 	InternetMaxBandwidthOut  int64
 	BandwidthPackageId       string
+	CamRoleName              string
 	AssociatePublicIpAddress bool
 	Tags                     map[string]string
 	DataDisks                []tencentCloudDataDisk
@@ -137,6 +138,7 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	req.ClientToken = &s.InstanceName
 	req.HostName = &s.HostName
 	req.UserData = &userData
+	req.CamRoleName = &s.CamRoleName
 	var tags []*cvm.Tag
 	for k, v := range s.Tags {
 		k := k
