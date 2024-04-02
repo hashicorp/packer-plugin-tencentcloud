@@ -257,38 +257,11 @@ func packerConfigClient(cf *TencentCloudAccessConfig) (*TencentCloudClient, erro
 		Region:        cf.Region,
 		ClientProfile: clientProfile,
 	}
-
-	cfg, err := loadConfigProfile(cf)
-	if err != nil {
-		return nil, err
-	}
+	
 	if cf.AssumeRole.RoleArn != "" && cf.AssumeRole.SessionName != "" {
 		if cf.AssumeRole.SessionDuration == 0 {
 			cf.AssumeRole.SessionDuration = 7200
 		}
-		err = genClientWithSTS(apiV3Conn, cf.AssumeRole.RoleArn, cf.AssumeRole.SessionName, cf.AssumeRole.SessionDuration, "")
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if cf.AssumeRole.RoleArn == "" && cfg["role-arn"] != nil {
-		cf.AssumeRole.RoleArn = cfg["role-arn"].(string)
-	}
-
-	if cf.AssumeRole.SessionName == "" && cfg["role-session-name"] != nil {
-		cf.AssumeRole.SessionName = cfg["role-session-name"].(string)
-	}
-
-	if cf.AssumeRole.SessionDuration == 0 && cfg["role-session-duration"] != nil {
-		cf.AssumeRole.SessionDuration = cfg["role-session-duration"].(int)
-	}
-
-	if cf.AssumeRole.RoleArn != "" && cf.AssumeRole.SessionName != "" {
-		if cf.AssumeRole.SessionDuration == 0 {
-			cf.AssumeRole.SessionDuration = 7200
-		}
-
 		err = genClientWithSTS(apiV3Conn, cf.AssumeRole.RoleArn, cf.AssumeRole.SessionName, cf.AssumeRole.SessionDuration, "")
 		if err != nil {
 			return nil, err

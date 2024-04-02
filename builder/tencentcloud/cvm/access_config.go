@@ -70,8 +70,6 @@ var ValidRegions = []Region{
 	Frankfurt, Ashburn, Siliconvalley, Toronto, SaoPaulo,
 }
 
-var packerConfig map[string]interface{}
-
 type TencentCloudAccessConfig struct {
 	// Tencentcloud secret id. You should set it directly,
 	// or set the `TENCENTCLOUD_SECRET_ID` environment variable.
@@ -224,6 +222,42 @@ func (cf *TencentCloudAccessConfig) Config() error {
 		cf.SharedCredentialsDir = os.Getenv(PACKER_SHARED_CREDENTIALS_DIR)
 	}
 
+	if cf.SecretId == "" || cf.SecretKey == "" {
+		if cf.Profile == "" {
+			cf.Profile = DEFAULT_PROFILE
+		}
+
+		value, err := loadConfigProfile(cf)
+		if err != nil {
+			return err
+		}
+
+		var getProviderConfig = func(key string) string {
+			var str string
+			if value != nil && value[key] != nil {
+				str = value[key].(string)
+			}
+			return str
+		}
+
+		if cf.SecretId == "" {
+			cf.SecretId = getProviderConfig("secretId")
+		}
+		if cf.SecretKey == "" {
+			cf.SecretKey = getProviderConfig("secretKey")
+		}
+		if cf.SecurityToken == "" {
+			cf.SecurityToken = getProviderConfig("securityToken")
+		}
+		if cf.Region == "" {
+			cf.Region = getProviderConfig("region")
+		}
+	}
+
+	if cf.SecretId == "" || cf.SecretKey == "" {
+		return fmt.Errorf("secret_id and secret_key not found in profile, parameter secret_id and secret_key must be set")
+	}
+
 	if cf.AssumeRole.RoleArn == "" {
 		cf.AssumeRole.RoleArn = os.Getenv(PACKER_ASSUME_ROLE_ARN)
 	}
@@ -241,42 +275,6 @@ func (cf *TencentCloudAccessConfig) Config() error {
 			}
 			cf.AssumeRole.SessionDuration = durationInt
 		}
-	}
-
-	if cf.Profile == "" {
-		cf.Profile = DEFAULT_PROFILE
-	}
-
-	if cf.SecretId == "" || cf.SecretKey == "" {
-		_, err := cf.GetProfileConfig("region")
-		if err != nil {
-			return err
-		}
-
-		var getProviderConfig = func(str string, key string) string {
-			value, err := cf.GetProfileConfig("region")
-			if err == nil && value != nil {
-				str = value.(string)
-			}
-			return str
-		}
-
-		if cf.SecretId == "" {
-			cf.SecretId = getProviderConfig(cf.SecretId, "secretId")
-		}
-		if cf.SecretKey == "" {
-			cf.SecretKey = getProviderConfig(cf.SecretKey, "secretKey")
-		}
-		if cf.SecurityToken == "" {
-			cf.SecurityToken = getProviderConfig(cf.SecurityToken, "securityToken")
-		}
-		if cf.Region == "" {
-			cf.Region = getProviderConfig(cf.Region, "region")
-		}
-	}
-
-	if cf.SecretId == "" || cf.SecretKey == "" {
-		return fmt.Errorf("secret_id and secret_key not found in profile, parameter secret_id and secret_key must be set")
 	}
 
 	return nil
@@ -301,10 +299,6 @@ func validRegion(region string) error {
 }
 
 func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, error) {
-	if len(packerConfig) > 0 {
-		return packerConfig, nil
-	}
-	
 	var (
 		profile              string
 		sharedCredentialsDir string
@@ -390,15 +384,3 @@ func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, er
 
 	return packerConfig, nil
 }
-
-func (cf *TencentCloudAccessConfig) GetProfileConfig(name string) (interface{}, error) {
-	cfg, err := loadConfigProfile(cf)
-	 if err != nil {
-	   return nil, err
-	}
-	profile, ok := cfg[name]
-	if !ok {
-	  return nil, fmt.Errorf("profile %s not found", name)
-	}
-	return profile, nil
- }
