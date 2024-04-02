@@ -248,13 +248,13 @@ func (cf *TencentCloudAccessConfig) Config() error {
 	}
 
 	if cf.SecretId == "" || cf.SecretKey == "" {
-		_, err := getConfigFromProfile(cf, "region")
+		_, err := cf.GetProfileConfig("region")
 		if err != nil {
 			return err
 		}
 
 		var getProviderConfig = func(str string, key string) string {
-			value, err := getConfigFromProfile(cf, key)
+			value, err := cf.GetProfileConfig("region")
 			if err == nil && value != nil {
 				str = value.(string)
 			}
@@ -300,7 +300,11 @@ func validRegion(region string) error {
 	return fmt.Errorf("unknown region: %s", region)
 }
 
-func getConfigFromProfile(cf *TencentCloudAccessConfig, ProfileKey string) (interface{}, error) {
+func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, error) {
+	if len(packerConfig) > 0 {
+		return packerConfig, nil
+	}
+	
 	var (
 		profile              string
 		sharedCredentialsDir string
@@ -335,7 +339,7 @@ func getConfigFromProfile(cf *TencentCloudAccessConfig, ProfileKey string) (inte
 		configurePath = fmt.Sprintf("%s/%s.configure", tmpSharedCredentialsDir, profile)
 	}
 
-	packerConfig = make(map[string]interface{})
+	packerConfig := make(map[string]interface{})
 	_, err = os.Stat(credentialPath)
 	if !os.IsNotExist(err) {
 		data, err := ioutil.ReadFile(credentialPath)
@@ -384,5 +388,17 @@ func getConfigFromProfile(cf *TencentCloudAccessConfig, ProfileKey string) (inte
 		return nil, err
 	}
 
-	return packerConfig[ProfileKey], nil
+	return packerConfig, nil
 }
+
+func (cf *TencentCloudAccessConfig) GetProfileConfig(name string) (interface{}, error) {
+	cfg, err := loadConfigProfile(cf)
+	 if err != nil {
+	   return nil, err
+	}
+	profile, ok := cfg[name]
+	if !ok {
+	  return nil, fmt.Errorf("profile %s not found", name)
+	}
+	return profile, nil
+ }
