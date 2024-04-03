@@ -222,21 +222,24 @@ func (cf *TencentCloudAccessConfig) Config() error {
 		cf.SharedCredentialsDir = os.Getenv(PACKER_SHARED_CREDENTIALS_DIR)
 	}
 
+	var value map[string]interface{}
+	var err error
+	getProviderConfig := func(key string) string {
+		var str string
+		if value != nil {
+			if v, ok := value[key]; ok {
+				str = v.(string)
+			}
+		}
+		return str
+	}
+
 	if cf.SecretId == "" || cf.SecretKey == "" {
-		value, err := loadConfigProfile(cf)
+		value, err = loadConfigProfile(cf)
 		if err != nil {
 			return err
 		}
 
-		getProviderConfig := func(key string) string {
-			var str string
-			if value != nil {
-				if v, ok := value[key]; ok {
-					str = v.(string)
-				}
-			}
-			return str
-		}
 		if cf.SecretId == "" {
 			cf.SecretId = getProviderConfig("secretId")
 		}
@@ -280,20 +283,19 @@ func (cf *TencentCloudAccessConfig) Config() error {
 		}
 	}
 
+	credentialPath, _, err := getProfilePatch(cf)
+	if err != nil {
+		return err
+	}
+	_, err = os.Stat(credentialPath)
+	if os.IsNotExist(err) {
+		return nil
+	}
+
 	if cf.AssumeRole.RoleArn == "" || cf.AssumeRole.SessionName == "" {
-		value, err := loadConfigProfile(cf)
+		value, err = loadConfigProfile(cf)
 		if err != nil {
 			return err
-		}
-
-		getProviderConfig := func(key string) string {
-			var str string
-			if value != nil {
-				if v, ok := value[key]; ok {
-					str = v.(string)
-				}
-			}
-			return str
 		}
 
 		if cf.AssumeRole.RoleArn == "" {
@@ -343,7 +345,7 @@ func validRegion(region string) error {
 	return fmt.Errorf("unknown region: %s", region)
 }
 
-func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, error) {
+func getProfilePatch(cf *TencentCloudAccessConfig) (string, string, error) {
 	var (
 		profile              string
 		sharedCredentialsDir string
@@ -363,7 +365,7 @@ func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, er
 
 	tmpSharedCredentialsDir, err := homedir.Expand(sharedCredentialsDir)
 	if err != nil {
-		return nil, err
+		return "", "", err
 	}
 
 	if tmpSharedCredentialsDir == "" {
@@ -376,6 +378,20 @@ func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, er
 	} else {
 		credentialPath = fmt.Sprintf("%s/%s.credential", tmpSharedCredentialsDir, profile)
 		configurePath = fmt.Sprintf("%s/%s.configure", tmpSharedCredentialsDir, profile)
+	}
+
+	return credentialPath, configurePath, nil
+}
+
+func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, error) {
+	var (
+		credentialPath       string
+		configurePath        string
+	)
+
+	credentialPath, configurePath, err := getProfilePatch(cf)
+	if err != nil {
+		return nil, err
 	}
 
 	packerConfig := make(map[string]interface{})
