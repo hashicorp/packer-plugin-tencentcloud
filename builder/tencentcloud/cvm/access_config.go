@@ -223,23 +223,20 @@ func (cf *TencentCloudAccessConfig) Config() error {
 	}
 
 	if cf.SecretId == "" || cf.SecretKey == "" {
-		if cf.Profile == "" {
-			cf.Profile = DEFAULT_PROFILE
-		}
-
 		value, err := loadConfigProfile(cf)
 		if err != nil {
 			return err
 		}
 
-		var getProviderConfig = func(key string) string {
+		getProviderConfig := func(key string) string {
 			var str string
-			if value != nil && value[key] != nil {
-				str = value[key].(string)
+			if value != nil {
+				if v, ok := value[key]; ok {
+					str = v.(string)
+				}
 			}
 			return str
 		}
-
 		if cf.SecretId == "" {
 			cf.SecretId = getProviderConfig("secretId")
 		}
@@ -255,15 +252,21 @@ func (cf *TencentCloudAccessConfig) Config() error {
 	}
 
 	if cf.SecretId == "" || cf.SecretKey == "" {
-		return fmt.Errorf("secret_id and secret_key not found in profile, parameter secret_id and secret_key must be set")
+		return fmt.Errorf("secret_id and secret_key not found, parameter secret_id and secret_key must be set")
 	}
 
 	if cf.AssumeRole.RoleArn == "" {
-		cf.AssumeRole.RoleArn = os.Getenv(PACKER_ASSUME_ROLE_ARN)
+		roleArn := os.Getenv(PACKER_ASSUME_ROLE_ARN)
+		if roleArn != "" {
+			cf.AssumeRole.RoleArn = roleArn
+		}
 	}
 
 	if cf.AssumeRole.SessionName == "" {
-		cf.AssumeRole.SessionName = os.Getenv(PACKER_ASSUME_ROLE_SESSION_NAME)
+		sessionName := os.Getenv(PACKER_ASSUME_ROLE_SESSION_NAME)
+		if sessionName != "" {
+			cf.AssumeRole.RoleArn = sessionName
+		}
 	}
 
 	if cf.AssumeRole.SessionDuration == 0 {
@@ -274,6 +277,48 @@ func (cf *TencentCloudAccessConfig) Config() error {
 				return err
 			}
 			cf.AssumeRole.SessionDuration = durationInt
+		}
+	}
+
+	if cf.AssumeRole.RoleArn == "" || cf.AssumeRole.SessionName == "" {
+		value, err := loadConfigProfile(cf)
+		if err != nil {
+			return err
+		}
+
+		getProviderConfig := func(key string) string {
+			var str string
+			if value != nil {
+				if v, ok := value[key]; ok {
+					str = v.(string)
+				}
+			}
+			return str
+		}
+
+		if cf.AssumeRole.RoleArn == "" {
+			roleArn := getProviderConfig("role-arn")
+			if roleArn != "" {
+				cf.AssumeRole.RoleArn = roleArn
+			}
+		}
+	
+		if cf.AssumeRole.SessionName == "" {
+			sessionName := getProviderConfig("role-session-name")
+			if sessionName != "" {
+				cf.AssumeRole.SessionName = sessionName
+			}
+		}
+	
+		if cf.AssumeRole.SessionDuration == 0 {
+			duration := getProviderConfig("role-session-duration")
+			if duration != "" {
+				durationInt, err := strconv.Atoi(duration)
+				if err != nil {
+					return err
+				}
+				cf.AssumeRole.SessionDuration = durationInt
+			}
 		}
 	}
 
@@ -344,14 +389,14 @@ func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, er
 		config := map[string]interface{}{}
 		err = json.Unmarshal(data, &config)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("credential file unmarshal failed, %s", err)
 		}
 
 		for k, v := range config {
 			packerConfig[k] = strings.TrimSpace(v.(string))
 		}
 	} else {
-		return nil, err
+		return nil, fmt.Errorf("please set a valid secret_id and secret_key or shared_credentials_dir, %s", err)
 	}
 	_, err = os.Stat(configurePath)
 	if !os.IsNotExist(err) {
@@ -363,7 +408,7 @@ func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, er
 		config := map[string]interface{}{}
 		err = json.Unmarshal(data, &config)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("configure file unmarshal failed, %s", err)
 		}
 
 	outerLoop:
@@ -379,7 +424,7 @@ func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, er
 			}
 		}
 	} else {
-		return nil, err
+		return nil, fmt.Errorf("please set a valid region or shared_credentials_dir, %s", err)
 	}
 
 	return packerConfig, nil
