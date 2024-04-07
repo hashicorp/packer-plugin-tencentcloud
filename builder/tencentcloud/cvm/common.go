@@ -257,7 +257,7 @@ func packerConfigClient(cf *TencentCloudAccessConfig) (*TencentCloudClient, erro
 		Region:        cf.Region,
 		ClientProfile: clientProfile,
 	}
-	
+
 	if cf.AssumeRole.RoleArn != "" && cf.AssumeRole.SessionName != "" {
 		if cf.AssumeRole.SessionDuration == 0 {
 			cf.AssumeRole.SessionDuration = 7200

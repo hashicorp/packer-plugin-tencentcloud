@@ -304,14 +304,14 @@ func (cf *TencentCloudAccessConfig) Config() error {
 				cf.AssumeRole.RoleArn = roleArn
 			}
 		}
-	
+
 		if cf.AssumeRole.SessionName == "" {
 			sessionName := getProviderConfig("role-session-name")
 			if sessionName != "" {
 				cf.AssumeRole.SessionName = sessionName
 			}
 		}
-	
+
 		if cf.AssumeRole.SessionDuration == 0 {
 			duration := getProviderConfig("role-session-duration")
 			if duration != "" {
@@ -385,8 +385,8 @@ func getProfilePatch(cf *TencentCloudAccessConfig) (string, string, error) {
 
 func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, error) {
 	var (
-		credentialPath       string
-		configurePath        string
+		credentialPath string
+		configurePath  string
 	)
 
 	credentialPath, configurePath, err := getProfilePatch(cf)
