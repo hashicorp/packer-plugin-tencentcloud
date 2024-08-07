@@ -4,9 +4,11 @@
 package cvm
 
 import (
+	cam "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cam/v20190116"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
+	org "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/organization/v20210331"
 	sts "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sts/v20180813"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
@@ -20,6 +22,8 @@ type TencentCloudClient struct {
 	vpcConn *vpc.Client
 	cvmConn *cvm.Client
 	stsConn *sts.Client
+	orgConn *org.Client
+	camConn *cam.Client
 }
 
 func (me *TencentCloudClient) UseVpcClient(cpf *profile.ClientProfile) *vpc.Client {
@@ -41,6 +45,27 @@ func (me *TencentCloudClient) UseCvmClient(cpf *profile.ClientProfile) *cvm.Clie
 	me.cvmConn, _ = cvm.NewClient(me.Credential, me.Region, cpf)
 
 	return me.cvmConn
+}
+
+func (me *TencentCloudClient) UseOrgClient(cpf *profile.ClientProfile) *org.Client {
+	if me.orgConn != nil {
+		return me.orgConn
+	}
+
+	me.orgConn, _ = org.NewClient(me.Credential, me.Region, cpf)
+
+	return me.orgConn
+}
+
+func (me *TencentCloudClient) UseCamClient() *cam.Client {
+	if me.camConn != nil {
+		return me.camConn
+	}
+
+	cpf := me.ClientProfile
+	me.camConn, _ = cam.NewClient(me.Credential, me.Region, cpf)
+
+	return me.camConn
 }
 
 func (me *TencentCloudClient) UseStsClient() *sts.Client {
