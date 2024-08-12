@@ -5,11 +5,14 @@ go 1.19
 require (
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/hashicorp/packer-plugin-sdk v0.5.2
+	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.9.1
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.799
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.799
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cam v1.0.978
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.978
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.978
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/organization v1.0.975
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sts v1.0.797
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.799
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.971
 	github.com/zclconf/go-cty v1.13.3
 )
 
@@ -69,7 +72,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mitchellh/go-fs v0.0.0-20180402235330-b7b9ca407fff // indirect
-	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/iochan v1.0.0 // indirect
