@@ -173,7 +173,7 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 
 	s.instanceId = *resp.Response.InstanceIdSet[0]
-	Message(state, "Waiting for instance ready", "")
+	Message(state, fmt.Sprintf("Instance %s created, waiting for instance ready", s.instanceId), "")
 
 	err = WaitForInstance(ctx, client, s.instanceId, "RUNNING", 1800)
 	if err != nil {
