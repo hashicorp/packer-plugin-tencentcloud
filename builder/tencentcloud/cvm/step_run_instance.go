@@ -11,6 +11,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/hashicorp/packer-plugin-sdk/uuid"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 )
 
@@ -125,7 +126,11 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 			req.InternetAccessible.BandwidthPackageId = &s.BandwidthPackageId
 		}
 	}
-	req.InstanceName = &s.InstanceName
+
+	// Generate a unique ClientToken for each RunInstances request
+	clientToken := uuid.TimeOrderedUUID()
+	req.ClientToken = &clientToken
+
 	loginSettings := cvm.LoginSettings{}
 	if password != "" {
 		loginSettings.Password = &password
@@ -135,7 +140,7 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 	req.LoginSettings = &loginSettings
 	req.SecurityGroupIds = []*string{&security_group_id}
-	req.ClientToken = &s.InstanceName
+	req.InstanceName = &s.InstanceName
 	req.HostName = &s.HostName
 	req.UserData = &userData
 	req.CamRoleName = &s.CamRoleName
