@@ -127,7 +127,7 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
   - LOCAL_BASIC: 50
   - Other: 50 ~ 1000 (need whitelist if > 50)
 
-- `data_disks` ([]tencentCloudDataDisk) - Add one or more data disks to the instance before creating the image.
+- `data_disks` ([]TencentCloudDataDisk) - Add one or more data disks to the instance before creating the image.
   Note that if the source image has data disk snapshots, this argument
   will be ignored, and the running instance will use source image data
   disk settings, in such case, `disk_type` argument will be used as disk

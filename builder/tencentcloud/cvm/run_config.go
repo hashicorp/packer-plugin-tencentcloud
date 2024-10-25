@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 //go:generate packer-sdc struct-markdown
-//go:generate packer-sdc mapstructure-to-hcl2 -type tencentCloudDataDisk
+//go:generate packer-sdc mapstructure-to-hcl2 -type TencentCloudDataDisk
 
 package cvm
 
@@ -18,7 +18,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-type tencentCloudDataDisk struct {
+type TencentCloudDataDisk struct {
 	DiskType   string `mapstructure:"disk_type"`
 	DiskSize   int64  `mapstructure:"disk_size"`
 	SnapshotId string `mapstructure:"disk_snapshot_id"`
@@ -60,7 +60,7 @@ type TencentCloudRunConfig struct {
 	// -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM` and `CLOUD_SSD`.
 	// -  `disk_size` - Size of the data disk.
 	// -  `disk_snapshot_id` - Id of the snapshot for a data disk.
-	DataDisks []tencentCloudDataDisk `mapstructure:"data_disks"`
+	DataDisks []TencentCloudDataDisk `mapstructure:"data_disks"`
 	// Specify vpc your cvm will be launched by.
 	VpcId string `mapstructure:"vpc_id" required:"false"`
 	// Specify vpc name you will create. if `vpc_id` is not set, Packer will
