@@ -44,7 +44,7 @@ type FlatConfig struct {
 	InstanceName              *string                     `mapstructure:"instance_name" required:"false" cty:"instance_name" hcl:"instance_name"`
 	DiskType                  *string                     `mapstructure:"disk_type" required:"false" cty:"disk_type" hcl:"disk_type"`
 	DiskSize                  *int64                      `mapstructure:"disk_size" required:"false" cty:"disk_size" hcl:"disk_size"`
-	DataDisks                 []FlattencentCloudDataDisk  `mapstructure:"data_disks" cty:"data_disks" hcl:"data_disks"`
+	DataDisks                 []FlatTencentCloudDataDisk  `mapstructure:"data_disks" cty:"data_disks" hcl:"data_disks"`
 	VpcId                     *string                     `mapstructure:"vpc_id" required:"false" cty:"vpc_id" hcl:"vpc_id"`
 	VpcName                   *string                     `mapstructure:"vpc_name" required:"false" cty:"vpc_name" hcl:"vpc_name"`
 	SubnetId                  *string                     `mapstructure:"subnet_id" required:"false" cty:"subnet_id" hcl:"subnet_id"`
@@ -160,7 +160,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"instance_name":                &hcldec.AttrSpec{Name: "instance_name", Type: cty.String, Required: false},
 		"disk_type":                    &hcldec.AttrSpec{Name: "disk_type", Type: cty.String, Required: false},
 		"disk_size":                    &hcldec.AttrSpec{Name: "disk_size", Type: cty.Number, Required: false},
-		"data_disks":                   &hcldec.BlockListSpec{TypeName: "data_disks", Nested: hcldec.ObjectSpec((*FlattencentCloudDataDisk)(nil).HCL2Spec())},
+		"data_disks":                   &hcldec.BlockListSpec{TypeName: "data_disks", Nested: hcldec.ObjectSpec((*FlatTencentCloudDataDisk)(nil).HCL2Spec())},
 		"vpc_id":                       &hcldec.AttrSpec{Name: "vpc_id", Type: cty.String, Required: false},
 		"vpc_name":                     &hcldec.AttrSpec{Name: "vpc_name", Type: cty.String, Required: false},
 		"subnet_id":                    &hcldec.AttrSpec{Name: "subnet_id", Type: cty.String, Required: false},

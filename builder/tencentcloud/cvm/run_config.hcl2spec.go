@@ -7,25 +7,25 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-// FlattencentCloudDataDisk is an auto-generated flat version of tencentCloudDataDisk.
+// FlatTencentCloudDataDisk is an auto-generated flat version of TencentCloudDataDisk.
 // Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
-type FlattencentCloudDataDisk struct {
+type FlatTencentCloudDataDisk struct {
 	DiskType   *string `mapstructure:"disk_type" cty:"disk_type" hcl:"disk_type"`
 	DiskSize   *int64  `mapstructure:"disk_size" cty:"disk_size" hcl:"disk_size"`
 	SnapshotId *string `mapstructure:"disk_snapshot_id" cty:"disk_snapshot_id" hcl:"disk_snapshot_id"`
 }
 
-// FlatMapstructure returns a new FlattencentCloudDataDisk.
-// FlattencentCloudDataDisk is an auto-generated flat version of tencentCloudDataDisk.
+// FlatMapstructure returns a new FlatTencentCloudDataDisk.
+// FlatTencentCloudDataDisk is an auto-generated flat version of TencentCloudDataDisk.
 // Where the contents a fields with a `mapstructure:,squash` tag are bubbled up.
-func (*tencentCloudDataDisk) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec } {
-	return new(FlattencentCloudDataDisk)
+func (*TencentCloudDataDisk) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec } {
+	return new(FlatTencentCloudDataDisk)
 }
 
-// HCL2Spec returns the hcl spec of a tencentCloudDataDisk.
-// This spec is used by HCL to read the fields of tencentCloudDataDisk.
-// The decoded values from this spec will then be applied to a FlattencentCloudDataDisk.
-func (*FlattencentCloudDataDisk) HCL2Spec() map[string]hcldec.Spec {
+// HCL2Spec returns the hcl spec of a TencentCloudDataDisk.
+// This spec is used by HCL to read the fields of TencentCloudDataDisk.
+// The decoded values from this spec will then be applied to a FlatTencentCloudDataDisk.
+func (*FlatTencentCloudDataDisk) HCL2Spec() map[string]hcldec.Spec {
 	s := map[string]hcldec.Spec{
 		"disk_type":        &hcldec.AttrSpec{Name: "disk_type", Type: cty.String, Required: false},
 		"disk_size":        &hcldec.AttrSpec{Name: "disk_size", Type: cty.Number, Required: false},

@@ -31,7 +31,7 @@ type stepRunInstance struct {
 	CamRoleName              string
 	AssociatePublicIpAddress bool
 	Tags                     map[string]string
-	DataDisks                []tencentCloudDataDisk
+	DataDisks                []TencentCloudDataDisk
 }
 
 func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
