@@ -172,6 +172,10 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `cam_role_name` (string) - CAM role name.
 
+- `enhanced_service` (\*TencentCloudEnhancedService) - Configure enhanced security for the instance. Enables you to disable automatic installation
+  of certain system services during initial provisioning. If omitted, default values are used
+  (see https://www.tencentcloud.com/document/api/213/15753#enhancedservice).
+
 - `run_tags` (map[string]string) - Tags to apply to the instance that is _launched_ to create the image.
   These tags are _not_ applied to the resulting image.
 
