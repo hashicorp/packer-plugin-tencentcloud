@@ -26,6 +26,7 @@ func (s *stepCreateImage) Run(ctx context.Context, state multistep.StateBag) mul
 	req := cvm.NewCreateImageRequest()
 	req.ImageName = &config.ImageName
 	req.ImageDescription = &config.ImageDescription
+	req.ImageFamily = &config.ImageFamily
 	req.InstanceId = instance.InstanceId
 
 	// TODO: We should allow user to specify which data disk should be

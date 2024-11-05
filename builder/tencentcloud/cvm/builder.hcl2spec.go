@@ -38,6 +38,7 @@ type FlatConfig struct {
 	ImageShareAccounts        []string                    `mapstructure:"image_share_accounts" required:"false" cty:"image_share_accounts" hcl:"image_share_accounts"`
 	IsShareOrgMembers         *bool                       `mapstructure:"is_share_org_members" required:"false" cty:"is_share_org_members" hcl:"is_share_org_members"`
 	ImageTags                 map[string]string           `mapstructure:"image_tags" required:"false" cty:"image_tags" hcl:"image_tags"`
+	ImageFamily               *string                     `mapstructure:"image_family" required:"false" cty:"image_family" hcl:"image_family"`
 	AssociatePublicIpAddress  *bool                       `mapstructure:"associate_public_ip_address" required:"false" cty:"associate_public_ip_address" hcl:"associate_public_ip_address"`
 	SourceImageId             *string                     `mapstructure:"source_image_id" required:"false" cty:"source_image_id" hcl:"source_image_id"`
 	SourceImageName           *string                     `mapstructure:"source_image_name" required:"false" cty:"source_image_name" hcl:"source_image_name"`
@@ -156,6 +157,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"image_share_accounts":         &hcldec.AttrSpec{Name: "image_share_accounts", Type: cty.List(cty.String), Required: false},
 		"is_share_org_members":         &hcldec.AttrSpec{Name: "is_share_org_members", Type: cty.Bool, Required: false},
 		"image_tags":                   &hcldec.AttrSpec{Name: "image_tags", Type: cty.Map(cty.String), Required: false},
+		"image_family":                 &hcldec.AttrSpec{Name: "image_family", Type: cty.String, Required: false},
 		"associate_public_ip_address":  &hcldec.AttrSpec{Name: "associate_public_ip_address", Type: cty.Bool, Required: false},
 		"source_image_id":              &hcldec.AttrSpec{Name: "source_image_id", Type: cty.String, Required: false},
 		"source_image_name":            &hcldec.AttrSpec{Name: "source_image_name", Type: cty.String, Required: false},

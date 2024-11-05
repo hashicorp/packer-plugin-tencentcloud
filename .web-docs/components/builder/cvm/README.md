@@ -110,6 +110,8 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `image_tags` (map[string]string) - Key/value pair tags that will be applied to the resulting image.
 
+- `image_family` (string) - Image family. Example value: business-daily-update.
+
 <!-- End of code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; -->
 
 

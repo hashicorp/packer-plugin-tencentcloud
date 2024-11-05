@@ -8,8 +8,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cam v1.0.978
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.978
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.978
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1035
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.1035
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/organization v1.0.975
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sts v1.0.797
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.971

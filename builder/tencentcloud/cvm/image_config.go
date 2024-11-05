@@ -39,6 +39,8 @@ type TencentCloudImageConfig struct {
 	// Key/value pair tags that will be applied to the resulting image.
 	ImageTags      map[string]string `mapstructure:"image_tags" required:"false"`
 	skipValidation bool
+	// Image family. Example value: business-daily-update.
+	ImageFamily string `mapstructure:"image_family" required:"false"`
 }
 
 func (cf *TencentCloudImageConfig) Prepare(ctx *interpolate.Context) []error {
