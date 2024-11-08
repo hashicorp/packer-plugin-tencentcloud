@@ -16,7 +16,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/mitchellh/go-homedir"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
@@ -174,7 +173,7 @@ func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
 	return nil, nil, fmt.Errorf("unknown zone: %s", cf.Zone)
 }
 
-func (cf *TencentCloudAccessConfig) Prepare(ctx *interpolate.Context) []error {
+func (cf *TencentCloudAccessConfig) Prepare() []error {
 	var errs []error
 
 	if err := cf.Config(); err != nil {
