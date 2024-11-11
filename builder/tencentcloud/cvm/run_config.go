@@ -126,10 +126,6 @@ func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
 		errs = append(errs, errors.New("source_image_id or source_image_name must be specified"))
 	}
 
-	if cf.SourceImageId != "" && !CheckResourceIdFormat("img", cf.SourceImageId) {
-		errs = append(errs, errors.New("source_image_id wrong format"))
-	}
-
 	if cf.InstanceType == "" {
 		errs = append(errs, errors.New("instance_type must be specified"))
 	}
