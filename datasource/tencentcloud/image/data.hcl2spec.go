@@ -30,6 +30,7 @@ type FlatConfig struct {
 	Profile              *string                         `mapstructure:"profile" required:"false" cty:"profile" hcl:"profile"`
 	SharedCredentialsDir *string                         `mapstructure:"shared_credentials_dir" required:"false" cty:"shared_credentials_dir" hcl:"shared_credentials_dir"`
 	Filters              map[string]string               `mapstructure:"filters" cty:"filters" hcl:"filters"`
+	ImageFamily          *string                         `mapstructure:"image_family" cty:"image_family" hcl:"image_family"`
 	MostRecent           *bool                           `mapstructure:"most_recent" cty:"most_recent" hcl:"most_recent"`
 }
 
@@ -64,6 +65,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"profile":                    &hcldec.AttrSpec{Name: "profile", Type: cty.String, Required: false},
 		"shared_credentials_dir":     &hcldec.AttrSpec{Name: "shared_credentials_dir", Type: cty.String, Required: false},
 		"filters":                    &hcldec.AttrSpec{Name: "filters", Type: cty.Map(cty.String), Required: false},
+		"image_family":               &hcldec.AttrSpec{Name: "image_family", Type: cty.String, Required: false},
 		"most_recent":                &hcldec.AttrSpec{Name: "most_recent", Type: cty.Bool, Required: false},
 	}
 	return s

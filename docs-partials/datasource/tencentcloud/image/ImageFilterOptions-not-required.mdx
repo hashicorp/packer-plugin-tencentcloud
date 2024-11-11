@@ -3,6 +3,10 @@
 - `filters` (map[string]string) - Filters used to select an image. Any filter described in the documentation for
   [DescribeImages](https://www.tencentcloud.com/document/product/213/33272) can be used.
 
+- `image_family` (string) - Image family used to select an image. Uses the
+  [DescribeImageFromFamily](https://www.tencentcloud.com/document/product/213/64971) API.
+  Mutually exclusive with `filters`, and `most_recent` will have no effect.
+
 - `most_recent` (bool) - Selects the most recently created image when multiple results are returned. Note that
   public images don't have a creation date, so this flag is only really useful for private
   images.
