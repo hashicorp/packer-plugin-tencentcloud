@@ -13,6 +13,14 @@
 - `image_share_accounts` ([]string) - accounts that will be shared to
   after your image created.
 
+- `is_share_org_members` (bool) - After creating the image,
+  whether to share it with other accounts in the organization
+  where the current account is located.
+  The image can be copied to a maximum of 50 accounts,
+  with ImageShareAccounts being the priority.
+
 - `image_tags` (map[string]string) - Key/value pair tags that will be applied to the resulting image.
+
+- `image_family` (string) - Image family. Example value: business-daily-update.
 
 <!-- End of code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; -->

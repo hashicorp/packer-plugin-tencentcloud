@@ -30,9 +30,17 @@ type TencentCloudImageConfig struct {
 	// accounts that will be shared to
 	// after your image created.
 	ImageShareAccounts []string `mapstructure:"image_share_accounts" required:"false"`
+	// After creating the image,
+	// whether to share it with other accounts in the organization
+	// where the current account is located.
+	// The image can be copied to a maximum of 50 accounts,
+	// with ImageShareAccounts being the priority.
+	IsShareOrgMembers bool `mapstructure:"is_share_org_members" required:"false"`
 	// Key/value pair tags that will be applied to the resulting image.
 	ImageTags      map[string]string `mapstructure:"image_tags" required:"false"`
 	skipValidation bool
+	// Image family. Example value: business-daily-update.
+	ImageFamily string `mapstructure:"image_family" required:"false"`
 }
 
 func (cf *TencentCloudImageConfig) Prepare(ctx *interpolate.Context) []error {

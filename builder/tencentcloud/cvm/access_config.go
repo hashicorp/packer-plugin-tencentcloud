@@ -18,7 +18,9 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/mitchellh/go-homedir"
+	cam "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cam/v20190116"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
+	org "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/organization/v20210331"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
@@ -91,6 +93,9 @@ type TencentCloudAccessConfig struct {
 	// The endpoint you want to reach the cloud endpoint,
 	// if tce cloud you should set a tce vpc endpoint.
 	VpcEndpoint string `mapstructure:"vpc_endpoint" required:"false"`
+	// The endpoint you want to reach the cloud endpoint,
+	// if tce cloud you should set a tce organization endpoint.
+	OrgEndpoint string `mapstructure:"org_endpoint" required:"false"`
 	// The region validation can be skipped if this value is true, the default
 	// value is false.
 	skipValidation bool
@@ -131,28 +136,38 @@ type TencentCloudAccessRole struct {
 	SessionDuration int `mapstructure:"session_duration" required:"false"`
 }
 
-func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
+func (cf *TencentCloudAccessConfig) Client() (map[string]interface{}, error) {
 	var (
 		err        error
 		cvm_client *cvm.Client
 		vpc_client *vpc.Client
+		org_client *org.Client
+		cam_client *cam.Client
 		resp       *cvm.DescribeZonesResponse
 	)
 
 	if err = cf.validateRegion(); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if cf.Zone == "" {
-		return nil, nil, fmt.Errorf("parameter zone must be set")
+		return nil, fmt.Errorf("parameter zone must be set")
 	}
 
 	if cvm_client, err = NewCvmClient(cf); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if vpc_client, err = NewVpcClient(cf); err != nil {
-		return nil, nil, err
+		return nil, err
+	}
+
+	if org_client, err = NewOrgClient(cf); err != nil {
+		return nil, err
+	}
+
+	if cam_client, err = NewCamClient(cf); err != nil {
+		return nil, err
 	}
 
 	ctx := context.TODO()
@@ -162,16 +177,21 @@ func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
 		return e
 	})
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	for _, zone := range resp.Response.ZoneSet {
 		if cf.Zone == *zone.Zone {
-			return cvm_client, vpc_client, nil
+			clientMap := map[string]interface{}{}
+			clientMap["cvm_client"] = cvm_client
+			clientMap["vpc_client"] = vpc_client
+			clientMap["org_client"] = org_client
+			clientMap["cam_client"] = cam_client
+			return clientMap, nil
 		}
 	}
 
-	return nil, nil, fmt.Errorf("unknown zone: %s", cf.Zone)
+	return nil, fmt.Errorf("unknown zone: %s", cf.Zone)
 }
 
 func (cf *TencentCloudAccessConfig) Prepare(ctx *interpolate.Context) []error {

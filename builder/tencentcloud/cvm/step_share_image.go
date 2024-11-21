@@ -6,19 +6,23 @@ package cvm
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	cam "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cam/v20190116"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
+	organization "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/organization/v20210331"
 )
 
 type stepShareImage struct {
-	ShareAccounts []string
+	ShareAccounts     []string
+	IsShareOrgMembers bool
 }
 
 func (s *stepShareImage) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	if len(s.ShareAccounts) == 0 {
+	if len(s.ShareAccounts) == 0 && !s.IsShareOrgMembers {
 		return multistep.ActionContinue
 	}
 
@@ -30,10 +34,23 @@ func (s *stepShareImage) Run(ctx context.Context, state multistep.StateBag) mult
 	req := cvm.NewModifyImageSharePermissionRequest()
 	req.ImageId = imageId
 	req.Permission = common.StringPtr("SHARE")
-	accounts := make([]*string, 0, len(s.ShareAccounts))
+	accounts := []*string{}
 	for _, account := range s.ShareAccounts {
 		accounts = append(accounts, common.StringPtr(account))
 	}
+
+	if s.IsShareOrgMembers {
+		accountList, err := s.getOrgAccounts(ctx, state)
+		if err != nil {
+			return Halt(state, err, "Failed to get org accounts")
+		}
+		accounts = append(accounts, accountList...)
+	}
+
+	if len(accounts) == 0 {
+		return multistep.ActionContinue
+	}
+
 	req.AccountIds = accounts
 	err := Retry(ctx, func(ctx context.Context) error {
 		_, e := client.ModifyImageSharePermission(req)
@@ -46,6 +63,81 @@ func (s *stepShareImage) Run(ctx context.Context, state multistep.StateBag) mult
 	Message(state, "Image shared", "")
 
 	return multistep.ActionContinue
+}
+
+func (s *stepShareImage) getOrgAccounts(ctx context.Context, state multistep.StateBag) ([]*string, error) {
+
+	currentAccount, err := s.getUserId(ctx, state)
+	if err != nil {
+		return nil, err
+	}
+
+	req := organization.NewDescribeOrganizationMembersRequest()
+	resp := organization.NewDescribeOrganizationMembersResponse()
+
+	var limit uint64 = 50
+	var offset uint64 = 0
+
+	req.Limit = &limit
+	req.Offset = &offset
+
+	accounts := []*string{}
+	for {
+		client := state.Get("org_client").(*organization.Client)
+		err := Retry(ctx, func(ctx context.Context) error {
+			var e error
+			resp, e = client.DescribeOrganizationMembers(req)
+			return e
+		})
+		if err != nil {
+			return nil, nil
+		}
+		if resp.Response == nil {
+			return nil, nil
+		}
+		items := resp.Response.Items
+		for _, v := range items {
+			if v.MemberUin != nil {
+				if strconv.FormatInt(*v.MemberUin, 10) == currentAccount {
+					continue
+				}
+				accounts = append(accounts, common.StringPtr(strconv.Itoa(int(*v.MemberUin))))
+			}
+		}
+
+		if len(items) < int(limit) {
+			break
+		}
+
+		offset += limit
+	}
+
+	return accounts, nil
+}
+
+func (s *stepShareImage) getUserId(ctx context.Context, state multistep.StateBag) (string, error) {
+	req := cam.NewGetUserAppIdRequest()
+	resp := cam.NewGetUserAppIdResponse()
+
+	client := state.Get("cam_client").(*cam.Client)
+	err := Retry(ctx, func(ctx context.Context) error {
+		var e error
+		resp, e = client.GetUserAppId(req)
+		return e
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if resp.Response == nil {
+		return "", nil
+	}
+
+	if resp.Response.Uin != nil {
+		return *resp.Response.Uin, nil
+	}
+
+	return "", nil
 }
 
 func (s *stepShareImage) Cleanup(state multistep.StateBag) {
