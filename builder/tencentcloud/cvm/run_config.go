@@ -19,8 +19,11 @@ import (
 )
 
 type TencentCloudDataDisk struct {
-	DiskType   string `mapstructure:"disk_type"`
-	DiskSize   int64  `mapstructure:"disk_size"`
+	// The size of the data disk.
+	DiskSize int64 `mapstructure:"disk_size" required:"true"`
+	// The type of disk to use. See https://www.tencentcloud.com/document/api/213/15753#datadisk for valid values.
+	DiskType string `mapstructure:"disk_type"`
+	// The snapshot to use for the data disk.
 	SnapshotId string `mapstructure:"disk_snapshot_id"`
 }
 
@@ -56,10 +59,6 @@ type TencentCloudRunConfig struct {
 	// disk settings, in such case, `disk_type` argument will be used as disk
 	// type for all data disks, and each data disk size will use the origin
 	// value in source image.
-	// The data disks allow for the following argument:
-	// -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM` and `CLOUD_SSD`.
-	// -  `disk_size` - Size of the data disk.
-	// -  `disk_snapshot_id` - Id of the snapshot for a data disk.
 	DataDisks []TencentCloudDataDisk `mapstructure:"data_disks"`
 	// Specify vpc your cvm will be launched by.
 	VpcId string `mapstructure:"vpc_id" required:"false"`

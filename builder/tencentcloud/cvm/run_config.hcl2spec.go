@@ -10,8 +10,8 @@ import (
 // FlatTencentCloudDataDisk is an auto-generated flat version of TencentCloudDataDisk.
 // Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
 type FlatTencentCloudDataDisk struct {
+	DiskSize   *int64  `mapstructure:"disk_size" required:"true" cty:"disk_size" hcl:"disk_size"`
 	DiskType   *string `mapstructure:"disk_type" cty:"disk_type" hcl:"disk_type"`
-	DiskSize   *int64  `mapstructure:"disk_size" cty:"disk_size" hcl:"disk_size"`
 	SnapshotId *string `mapstructure:"disk_snapshot_id" cty:"disk_snapshot_id" hcl:"disk_snapshot_id"`
 }
 
@@ -27,8 +27,8 @@ func (*TencentCloudDataDisk) FlatMapstructure() interface{ HCL2Spec() map[string
 // The decoded values from this spec will then be applied to a FlatTencentCloudDataDisk.
 func (*FlatTencentCloudDataDisk) HCL2Spec() map[string]hcldec.Spec {
 	s := map[string]hcldec.Spec{
-		"disk_type":        &hcldec.AttrSpec{Name: "disk_type", Type: cty.String, Required: false},
 		"disk_size":        &hcldec.AttrSpec{Name: "disk_size", Type: cty.Number, Required: false},
+		"disk_type":        &hcldec.AttrSpec{Name: "disk_type", Type: cty.String, Required: false},
 		"disk_snapshot_id": &hcldec.AttrSpec{Name: "disk_snapshot_id", Type: cty.String, Required: false},
 	}
 	return s
