@@ -60,6 +60,8 @@ type TencentCloudRunConfig struct {
 	// type for all data disks, and each data disk size will use the origin
 	// value in source image.
 	DataDisks []TencentCloudDataDisk `mapstructure:"data_disks"`
+	// Whether to include data disks in the resulting image. Defaults to true.
+	IncludeDataDisks bool `mapstructure:"include_data_disks" required:"false" default:"true"`
 	// Specify vpc your cvm will be launched by.
 	VpcId string `mapstructure:"vpc_id" required:"false"`
 	// Specify vpc name you will create. if `vpc_id` is not set, Packer will

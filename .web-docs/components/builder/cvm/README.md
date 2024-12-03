@@ -134,6 +134,8 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
   type for all data disks, and each data disk size will use the origin
   value in source image.
 
+- `include_data_disks` (bool) - Whether to include data disks in the resulting image. Defaults to true.
+
 - `vpc_id` (string) - Specify vpc your cvm will be launched by.
 
 - `vpc_name` (string) - Specify vpc name you will create. if `vpc_id` is not set, Packer will
