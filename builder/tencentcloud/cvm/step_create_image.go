@@ -12,7 +12,6 @@ import (
 )
 
 type stepCreateImage struct {
-	imageId string
 }
 
 func (s *stepCreateImage) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -95,21 +94,18 @@ func (s *stepCreateImage) Run(ctx context.Context, state multistep.StateBag) mul
 		return Halt(state, fmt.Errorf("No image return"), "Failed to crate image")
 	}
 
-	s.imageId = *image.ImageId
 	state.Put("image", image)
-	Message(state, s.imageId, "Image created")
+	Message(state, *image.ImageId, "Image created")
 
 	tencentCloudImages := make(map[string]string)
-	tencentCloudImages[config.Region] = s.imageId
+	tencentCloudImages[config.Region] = *image.ImageId
 	state.Put("tencentcloudimages", tencentCloudImages)
 
 	return multistep.ActionContinue
 }
 
 func (s *stepCreateImage) Cleanup(state multistep.StateBag) {
-	if s.imageId == "" {
-		return
-	}
+	imageId := state.Get("image").(*cvm.Image).ImageId
 
 	_, cancelled := state.GetOk(multistep.StateCancelled)
 	_, halted := state.GetOk(multistep.StateHalted)
@@ -123,12 +119,12 @@ func (s *stepCreateImage) Cleanup(state multistep.StateBag) {
 	SayClean(state, "image")
 
 	req := cvm.NewDeleteImagesRequest()
-	req.ImageIds = []*string{&s.imageId}
+	req.ImageIds = []*string{imageId}
 	err := Retry(ctx, func(ctx context.Context) error {
 		_, e := client.DeleteImages(req)
 		return e
 	})
 	if err != nil {
-		Error(state, err, fmt.Sprintf("Failed to delete image(%s), please delete it manually", s.imageId))
+		Error(state, err, fmt.Sprintf("Failed to delete image(%s), please delete it manually", imageId))
 	}
 }
