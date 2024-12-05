@@ -6,7 +6,6 @@ package cvm
 import (
 	"context"
 	"fmt"
-
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 )
@@ -31,7 +30,7 @@ func (s *stepCreateImage) Run(ctx context.Context, state multistep.StateBag) mul
 	var dataDiskIds []*string
 	// There is no way to correlate instance disk IDs to our own data disk definitions,
 	// so the best we can do is to either include all disks or include none.
-	if config.IncludeDataDisks {
+	if config.IncludeDataDisks.True() {
 		for _, disk := range instance.DataDisks {
 			dataDiskIds = append(dataDiskIds, disk.DiskId)
 		}

@@ -61,7 +61,7 @@ type TencentCloudRunConfig struct {
 	// value in source image.
 	DataDisks []TencentCloudDataDisk `mapstructure:"data_disks"`
 	// Whether to include data disks in the resulting image. Defaults to true.
-	IncludeDataDisks bool `mapstructure:"include_data_disks" required:"false" default:"true"`
+	IncludeDataDisks config.Trilean `mapstructure:"include_data_disks" required:"false"`
 	// Specify vpc your cvm will be launched by.
 	VpcId string `mapstructure:"vpc_id" required:"false"`
 	// Specify vpc name you will create. if `vpc_id` is not set, Packer will
@@ -115,6 +115,11 @@ var ValidCBSType = []string{
 }
 
 func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
+	// Include data disks by default
+	if cf.IncludeDataDisks != config.TriFalse {
+		cf.IncludeDataDisks = config.TriTrue
+	}
+
 	packerId := fmt.Sprintf("packer_%s", uuid.TimeOrderedUUID()[:8])
 	if cf.Comm.SSHKeyPairName == "" && cf.Comm.SSHTemporaryKeyPairName == "" &&
 		cf.Comm.SSHPrivateKeyFile == "" && cf.Comm.SSHPassword == "" && cf.Comm.WinRMPassword == "" {

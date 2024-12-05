@@ -45,7 +45,7 @@ type FlatConfig struct {
 	DiskType                  *string                     `mapstructure:"disk_type" required:"false" cty:"disk_type" hcl:"disk_type"`
 	DiskSize                  *int64                      `mapstructure:"disk_size" required:"false" cty:"disk_size" hcl:"disk_size"`
 	DataDisks                 []FlatTencentCloudDataDisk  `mapstructure:"data_disks" cty:"data_disks" hcl:"data_disks"`
-	IncludeDataDisks          *bool                       `mapstructure:"include_data_disks" required:"false" default:"true" cty:"include_data_disks" hcl:"include_data_disks"`
+	IncludeDataDisks          *bool                       `mapstructure:"include_data_disks" required:"false" cty:"include_data_disks" hcl:"include_data_disks"`
 	VpcId                     *string                     `mapstructure:"vpc_id" required:"false" cty:"vpc_id" hcl:"vpc_id"`
 	VpcName                   *string                     `mapstructure:"vpc_name" required:"false" cty:"vpc_name" hcl:"vpc_name"`
 	SubnetId                  *string                     `mapstructure:"subnet_id" required:"false" cty:"subnet_id" hcl:"subnet_id"`
