@@ -90,7 +90,9 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 	// Build the steps
 	var steps []multistep.Step
 	steps = []multistep.Step{
-		&stepPreValidate{},
+		&stepPreValidate{
+			b.config.SkipCreateImage,
+		},
 		&stepCheckSourceImage{
 			b.config.SourceImageId,
 		},
