@@ -19,14 +19,17 @@ type stepCopyImage struct {
 }
 
 func (s *stepCopyImage) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	if len(s.DesinationRegions) == 0 || (len(s.DesinationRegions) == 1 && s.DesinationRegions[0] == s.SourceRegion) {
+	image, ok := state.GetOk("image")
+
+	// Skip if we don't have an image to copy or no regions to copy to
+	if !ok || len(s.DestinationRegions) == 0 || (len(s.DestinationRegions) == 1 && s.DestinationRegions[0] == s.SourceRegion) {
 		return multistep.ActionContinue
 	}
 
 	config := state.Get("config").(*Config)
 	client := state.Get("cvm_client").(*cvm.Client)
 
-	imageId := state.Get("image").(*cvm.Image).ImageId
+	imageId := image.(*cvm.Image).ImageId
 
 	Say(state, strings.Join(s.DestinationRegions, ","), "Trying to copy image to")
 

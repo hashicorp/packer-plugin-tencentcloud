@@ -33,6 +33,8 @@ type TencentCloudImageConfig struct {
 	// Key/value pair tags that will be applied to the resulting image.
 	ImageTags      map[string]string `mapstructure:"image_tags" required:"false"`
 	skipValidation bool
+	// Skip creating the image. Defaults to `false`.
+	SkipCreateImage bool `mapstructure:"skip_create_image" required:"false"`
 }
 
 func (cf *TencentCloudImageConfig) Prepare(ctx *interpolate.Context) []error {
