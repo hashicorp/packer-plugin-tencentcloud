@@ -32,6 +32,7 @@ type stepRunInstance struct {
 	AssociatePublicIpAddress bool
 	Tags                     map[string]string
 	DataDisks                []tencentCloudDataDisk
+	CdcId                    string
 }
 
 func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -66,9 +67,13 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	if instanceChargeType == "" {
 		instanceChargeType = "POSTPAID_BY_HOUR"
 	}
+	if s.CdcId != "" {
+		instanceChargeType = "CDCPAID"
+	}
 	req.InstanceChargeType = &instanceChargeType
 	req.ImageId = source_image.ImageId
 	req.InstanceType = &s.InstanceType
+	req.DedicatedClusterId = &s.CdcId
 	// TODO: Add check for system disk size, it should be larger than image system disk size.
 	req.SystemDisk = &cvm.SystemDisk{
 		DiskType: &s.DiskType,
@@ -157,6 +162,7 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 			},
 		}
 	}
+	Message(state, req.ToJsonString(), "[DEBUG] request data")
 
 	var resp *cvm.RunInstancesResponse
 	err = Retry(ctx, func(ctx context.Context) error {

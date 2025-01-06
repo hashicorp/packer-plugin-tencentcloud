@@ -103,6 +103,8 @@ type TencentCloudRunConfig struct {
 	// [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
 	// will allow you to create those programatically.
 	RunTag config.KeyValues `mapstructure:"run_tag" required:"false"`
+	// Support for local dedicated cluster CDC
+	CdcId string `mapstructure:"cdc_id" required:"false"`
 
 	// Communicator settings
 	Comm         communicator.Config `mapstructure:",squash"`
