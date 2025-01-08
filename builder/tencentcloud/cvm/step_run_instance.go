@@ -162,7 +162,6 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 			},
 		}
 	}
-	Message(state, req.ToJsonString(), "[DEBUG] request data")
 
 	var resp *cvm.RunInstancesResponse
 	err = Retry(ctx, func(ctx context.Context) error {
