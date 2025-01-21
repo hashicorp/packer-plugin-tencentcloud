@@ -54,7 +54,6 @@ func (s *stepCopyImage) Run(ctx context.Context, state multistep.StateBag) multi
 	cf := &TencentCloudAccessConfig{
 		SecretId:      config.SecretId,
 		SecretKey:     config.SecretKey,
-		Zone:          config.Zone,
 		CvmEndpoint:   config.CvmEndpoint,
 		SecurityToken: config.SecurityToken,
 		AssumeRole: TencentCloudAccessRole{
