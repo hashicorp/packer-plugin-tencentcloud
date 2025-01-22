@@ -7,7 +7,6 @@
 package cvm
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -16,7 +15,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/mitchellh/go-homedir"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
@@ -81,10 +79,6 @@ type TencentCloudAccessConfig struct {
 	// reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
 	// for parameter taking.
 	Region string `mapstructure:"region" required:"true"`
-	// The zone where your cvm will be launch. You should
-	// reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
-	// for parameter taking.
-	Zone string `mapstructure:"zone" required:"true"`
 	// The endpoint you want to reach the cloud endpoint,
 	// if tce cloud you should set a tce cvm endpoint.
 	CvmEndpoint string `mapstructure:"cvm_endpoint" required:"false"`
@@ -136,15 +130,10 @@ func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
 		err        error
 		cvm_client *cvm.Client
 		vpc_client *vpc.Client
-		resp       *cvm.DescribeZonesResponse
 	)
 
 	if err = cf.validateRegion(); err != nil {
 		return nil, nil, err
-	}
-
-	if cf.Zone == "" {
-		return nil, nil, fmt.Errorf("parameter zone must be set")
 	}
 
 	if cvm_client, err = NewCvmClient(cf); err != nil {
@@ -155,26 +144,10 @@ func (cf *TencentCloudAccessConfig) Client() (*cvm.Client, *vpc.Client, error) {
 		return nil, nil, err
 	}
 
-	ctx := context.TODO()
-	err = Retry(ctx, func(ctx context.Context) error {
-		var e error
-		resp, e = cvm_client.DescribeZones(nil)
-		return e
-	})
-	if err != nil {
-		return nil, nil, err
-	}
-
-	for _, zone := range resp.Response.ZoneSet {
-		if cf.Zone == *zone.Zone {
-			return cvm_client, vpc_client, nil
-		}
-	}
-
-	return nil, nil, fmt.Errorf("unknown zone: %s", cf.Zone)
+	return cvm_client, vpc_client, nil
 }
 
-func (cf *TencentCloudAccessConfig) Prepare(ctx *interpolate.Context) []error {
+func (cf *TencentCloudAccessConfig) Prepare() []error {
 	var errs []error
 
 	if err := cf.Config(); err != nil {

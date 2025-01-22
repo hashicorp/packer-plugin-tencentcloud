@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"regexp"
 	"strings"
 	"time"
 
@@ -141,12 +140,6 @@ func NewVpcClient(cf *TencentCloudAccessConfig) (client *vpc.Client, err error) 
 	client = apiV3Conn.UseVpcClient(vpcClientProfile)
 
 	return
-}
-
-// CheckResourceIdFormat check resource id format
-func CheckResourceIdFormat(resource string, id string) bool {
-	regex := regexp.MustCompile(fmt.Sprintf("%s-[0-9a-z]{8}$", resource))
-	return regex.MatchString(id)
 }
 
 // SSHHost returns a function that can be given to the SSH communicator
