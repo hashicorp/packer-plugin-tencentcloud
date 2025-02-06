@@ -69,11 +69,11 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 	if s.CdcId != "" {
 		instanceChargeType = "CDCPAID"
+		req.DedicatedClusterId = &s.CdcId
 	}
 	req.InstanceChargeType = &instanceChargeType
 	req.ImageId = source_image.ImageId
 	req.InstanceType = &s.InstanceType
-	req.DedicatedClusterId = &s.CdcId
 	// TODO: Add check for system disk size, it should be larger than image system disk size.
 	req.SystemDisk = &cvm.SystemDisk{
 		DiskType: &s.DiskType,
