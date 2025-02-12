@@ -58,7 +58,9 @@ func (s *stepConfigSubnet) Run(ctx context.Context, state multistep.StateBag) mu
 	req.SubnetName = &s.SubnetName
 	req.CidrBlock = &s.SubnetCidrBlock
 	req.Zone = &s.Zone
-	req.CdcId = &s.CdcId
+	if s.CdcId != "" {
+		req.CdcId = &s.CdcId
+	}
 	var resp *vpc.CreateSubnetResponse
 	err := Retry(ctx, func(ctx context.Context) error {
 		var e error
