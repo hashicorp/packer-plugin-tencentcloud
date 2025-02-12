@@ -180,6 +180,8 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
   [`dynamic_block`](/packer/docs/templates/hcl_templates/expressions#dynamic-blocks)
   will allow you to create those programatically.
 
+- `cdc_id` (string) - Support for local dedicated cluster CDC
+
 - `ssh_private_ip` (bool) - SSH Private Ip
 
 <!-- End of code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; -->

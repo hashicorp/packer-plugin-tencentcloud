@@ -32,6 +32,7 @@ type stepRunInstance struct {
 	AssociatePublicIpAddress bool
 	Tags                     map[string]string
 	DataDisks                []tencentCloudDataDisk
+	CdcId                    string
 }
 
 func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -65,6 +66,10 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	instanceChargeType := s.InstanceChargeType
 	if instanceChargeType == "" {
 		instanceChargeType = "POSTPAID_BY_HOUR"
+	}
+	if s.CdcId != "" {
+		instanceChargeType = "CDCPAID"
+		req.DedicatedClusterId = &s.CdcId
 	}
 	req.InstanceChargeType = &instanceChargeType
 	req.ImageId = source_image.ImageId

@@ -62,6 +62,7 @@ type FlatConfig struct {
 	CamRoleName               *string                     `mapstructure:"cam_role_name" required:"false" cty:"cam_role_name" hcl:"cam_role_name"`
 	RunTags                   map[string]string           `mapstructure:"run_tags" required:"false" cty:"run_tags" hcl:"run_tags"`
 	RunTag                    []config.FlatKeyValue       `mapstructure:"run_tag" required:"false" cty:"run_tag" hcl:"run_tag"`
+	CdcId                     *string                     `mapstructure:"cdc_id" required:"false" cty:"cdc_id" hcl:"cdc_id"`
 	Type                      *string                     `mapstructure:"communicator" cty:"communicator" hcl:"communicator"`
 	PauseBeforeConnect        *string                     `mapstructure:"pause_before_connecting" cty:"pause_before_connecting" hcl:"pause_before_connecting"`
 	SSHHost                   *string                     `mapstructure:"ssh_host" cty:"ssh_host" hcl:"ssh_host"`
@@ -178,6 +179,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"cam_role_name":                &hcldec.AttrSpec{Name: "cam_role_name", Type: cty.String, Required: false},
 		"run_tags":                     &hcldec.AttrSpec{Name: "run_tags", Type: cty.Map(cty.String), Required: false},
 		"run_tag":                      &hcldec.BlockListSpec{TypeName: "run_tag", Nested: hcldec.ObjectSpec((*config.FlatKeyValue)(nil).HCL2Spec())},
+		"cdc_id":                       &hcldec.AttrSpec{Name: "cdc_id", Type: cty.String, Required: false},
 		"communicator":                 &hcldec.AttrSpec{Name: "communicator", Type: cty.String, Required: false},
 		"pause_before_connecting":      &hcldec.AttrSpec{Name: "pause_before_connecting", Type: cty.String, Required: false},
 		"ssh_host":                     &hcldec.AttrSpec{Name: "ssh_host", Type: cty.String, Required: false},

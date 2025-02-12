@@ -109,6 +109,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			SubnetCidrBlock: b.config.SubnectCidrBlock,
 			SubnetName:      b.config.SubnetName,
 			Zone:            b.config.Zone,
+			CdcId:           b.config.CdcId,
 		},
 		&stepConfigSecurityGroup{
 			SecurityGroupId:   b.config.SecurityGroupId,
@@ -132,6 +133,7 @@ func (b *Builder) Run(ctx context.Context, ui packersdk.Ui, hook packersdk.Hook)
 			AssociatePublicIpAddress: b.config.AssociatePublicIpAddress,
 			CamRoleName:              b.config.CamRoleName,
 			Tags:                     b.config.RunTags,
+			CdcId:                    b.config.CdcId,
 		},
 		&communicator.StepConnect{
 			Config:    &b.config.TencentCloudRunConfig.Comm,
