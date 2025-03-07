@@ -1,0 +1,31 @@
+name: sync-code
+
+on:
+  push:
+    branches:
+      - main
+      - 'coding-test/**'
+      - 'pipeline/**'
+    tags: v*
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: clone
+        run: |
+          if [ -d packer-plugin-tencentcloud ]; then
+            rm -rf packer-plugin-tencentcloud
+          fi
+          git clone https://github.com/tencentcloudstack/packer-plugin-tencentcloud.git
+      - name: sync
+        run: |
+          cd packer-plugin-tencentcloud
+          git fetch --all
+          git branch -r --list "origin/coding-test/*"  | grep -v HEAD | grep -v master | xargs -I {}  git checkout -t {}
+          git branch -r --list "origin/pipeline/*"  | grep -v HEAD | grep -v master | xargs -I {}  git checkout -t {}
+          git remote add tgit_origin https://${{ secrets.USERNAME }}:${{ secrets.PASSWORD }}@git.code.tencent.com/tencentcloudstack/packer-plugin-tencentcloud.git
+          git push -u tgit_origin -f --all
+          git push -u tgit_origin main:main
+          git push -u tgit_origin --tags
