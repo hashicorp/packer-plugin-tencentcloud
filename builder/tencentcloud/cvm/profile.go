@@ -17,7 +17,7 @@ import (
 type Profile struct {
 	Type                string `json:"type,omitempty"`
 	Region              string
-	SecretId            string `json:"	,omitempty"`
+	SecretId            string `json:"secretId,omitempty"`
 	SecretKey           string `json:"secretKey,omitempty"`
 	Token               string `json:"token,omitempty"`
 	ExpiresAt           int64  `json:"expiresAt,omitempty"`
