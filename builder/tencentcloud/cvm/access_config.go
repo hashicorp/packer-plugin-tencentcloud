@@ -8,16 +8,11 @@ package cvm
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"runtime"
 	"strconv"
-	"strings"
 
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	"github.com/mitchellh/go-homedir"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
@@ -222,35 +217,23 @@ func (cf *TencentCloudAccessConfig) Config() error {
 		cf.SharedCredentialsDir = os.Getenv(PACKER_SHARED_CREDENTIALS_DIR)
 	}
 
-	var value map[string]interface{}
-	var err error
-	getProviderConfig := func(key string) string {
-		var str string
-		if value != nil {
-			if v, ok := value[key]; ok {
-				str = v.(string)
-			}
-		}
-		return str
-	}
-
 	if cf.SecretId == "" || cf.SecretKey == "" {
-		value, err = loadConfigProfile(cf)
+		profile, err := loadConfigProfile(cf)
 		if err != nil {
 			return err
 		}
 
 		if cf.SecretId == "" {
-			cf.SecretId = getProviderConfig("secretId")
+			cf.SecretId = profile.SecretId
 		}
 		if cf.SecretKey == "" {
-			cf.SecretKey = getProviderConfig("secretKey")
+			cf.SecretKey = profile.SecretKey
 		}
 		if cf.SecurityToken == "" {
-			cf.SecurityToken = getProviderConfig("securityToken")
+			cf.SecurityToken = profile.Token
 		}
 		if cf.Region == "" {
-			cf.Region = getProviderConfig("region")
+			cf.Region = profile.Region
 		}
 	}
 
@@ -293,33 +276,29 @@ func (cf *TencentCloudAccessConfig) Config() error {
 	}
 
 	if cf.AssumeRole.RoleArn == "" || cf.AssumeRole.SessionName == "" {
-		value, err = loadConfigProfile(cf)
+		profile, err := loadConfigProfile(cf)
 		if err != nil {
 			return err
 		}
 
 		if cf.AssumeRole.RoleArn == "" {
-			roleArn := getProviderConfig("role-arn")
+			roleArn := profile.RoleArn
 			if roleArn != "" {
 				cf.AssumeRole.RoleArn = roleArn
 			}
 		}
 
 		if cf.AssumeRole.SessionName == "" {
-			sessionName := getProviderConfig("role-session-name")
+			sessionName := profile.RoleSessionName
 			if sessionName != "" {
 				cf.AssumeRole.SessionName = sessionName
 			}
 		}
 
 		if cf.AssumeRole.SessionDuration == 0 {
-			duration := getProviderConfig("role-session-duration")
-			if duration != "" {
-				durationInt, err := strconv.Atoi(duration)
-				if err != nil {
-					return err
-				}
-				cf.AssumeRole.SessionDuration = durationInt
+			duration := profile.RoleSessionDuration
+			if duration != 0 {
+				cf.AssumeRole.SessionDuration = int(duration)
 			}
 		}
 	}
@@ -343,105 +322,4 @@ func validRegion(region string) error {
 	}
 
 	return fmt.Errorf("unknown region: %s", region)
-}
-
-func getProfilePatch(cf *TencentCloudAccessConfig) (string, string, error) {
-	var (
-		profile              string
-		sharedCredentialsDir string
-		credentialPath       string
-		configurePath        string
-	)
-
-	if cf.Profile != "" {
-		profile = cf.Profile
-	} else {
-		profile = DEFAULT_PROFILE
-	}
-
-	if cf.SharedCredentialsDir != "" {
-		sharedCredentialsDir = cf.SharedCredentialsDir
-	}
-
-	tmpSharedCredentialsDir, err := homedir.Expand(sharedCredentialsDir)
-	if err != nil {
-		return "", "", err
-	}
-
-	if tmpSharedCredentialsDir == "" {
-		credentialPath = fmt.Sprintf("%s/.tccli/%s.credential", os.Getenv("HOME"), profile)
-		configurePath = fmt.Sprintf("%s/.tccli/%s.configure", os.Getenv("HOME"), profile)
-		if runtime.GOOS == "windows" {
-			credentialPath = fmt.Sprintf("%s/.tccli/%s.credential", os.Getenv("USERPROFILE"), profile)
-			configurePath = fmt.Sprintf("%s/.tccli/%s.configure", os.Getenv("USERPROFILE"), profile)
-		}
-	} else {
-		credentialPath = fmt.Sprintf("%s/%s.credential", tmpSharedCredentialsDir, profile)
-		configurePath = fmt.Sprintf("%s/%s.configure", tmpSharedCredentialsDir, profile)
-	}
-
-	return credentialPath, configurePath, nil
-}
-
-func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, error) {
-	var (
-		credentialPath string
-		configurePath  string
-	)
-
-	credentialPath, configurePath, err := getProfilePatch(cf)
-	if err != nil {
-		return nil, err
-	}
-
-	packerConfig := make(map[string]interface{})
-	_, err = os.Stat(credentialPath)
-	if !os.IsNotExist(err) {
-		data, err := ioutil.ReadFile(credentialPath)
-		if err != nil {
-			return nil, err
-		}
-
-		config := map[string]interface{}{}
-		err = json.Unmarshal(data, &config)
-		if err != nil {
-			return nil, fmt.Errorf("credential file unmarshal failed, %s", err)
-		}
-
-		for k, v := range config {
-			packerConfig[k] = strings.TrimSpace(v.(string))
-		}
-	} else {
-		return nil, fmt.Errorf("please set a valid secret_id and secret_key or shared_credentials_dir, %s", err)
-	}
-	_, err = os.Stat(configurePath)
-	if !os.IsNotExist(err) {
-		data, err := ioutil.ReadFile(configurePath)
-		if err != nil {
-			return nil, err
-		}
-
-		config := map[string]interface{}{}
-		err = json.Unmarshal(data, &config)
-		if err != nil {
-			return nil, fmt.Errorf("configure file unmarshal failed, %s", err)
-		}
-
-	outerLoop:
-		for k, v := range config {
-			if k == "_sys_param" {
-				tmpMap := v.(map[string]interface{})
-				for tmpK, tmpV := range tmpMap {
-					if tmpK == "region" {
-						packerConfig[tmpK] = strings.TrimSpace(tmpV.(string))
-						break outerLoop
-					}
-				}
-			}
-		}
-	} else {
-		return nil, fmt.Errorf("please set a valid region or shared_credentials_dir, %s", err)
-	}
-
-	return packerConfig, nil
 }
