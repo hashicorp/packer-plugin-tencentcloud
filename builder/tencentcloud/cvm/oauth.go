@@ -26,7 +26,7 @@ func GetOauthConfig(p *Profile) error {
 		now := time.Now()
 		futureTime := now.Add(30 * time.Second)
 		targetTime := time.Unix(p.Oauth.ExpiresAt, 0)
-		if targetTime.After(futureTime) {
+		if futureTime.After(targetTime) {
 			expired = true
 		}
 	}
