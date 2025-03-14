@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+        uses: actions/checkout@v4
       - name: Unshallow
         run: git fetch --prune --unshallow
       - name: Set up Go
@@ -48,16 +48,16 @@ jobs:
       - name: Describe plugin
         id: plugin_describe
         run: echo "api_version=$(go run . describe | jq -r '.api_version')" >> "$GITHUB_OUTPUT"
-      - name: Install signore
-        uses: hashicorp/setup-signore-package@v1
+      # - name: Install signore
+      #   uses: hashicorp/setup-signore-package@v1
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@7ec5c2b0c6cdda6e8bbb49444bc797dd33d74dd8 # v5.0.0
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
           args: release --clean --timeout 120m
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           API_VERSION: ${{ steps.plugin_describe.outputs.api_version }}
-          SIGNORE_CLIENT_ID: ${{ secrets.SIGNORE_CLIENT_ID }}
-          SIGNORE_CLIENT_SECRET: ${{ secrets.SIGNORE_CLIENT_SECRET }}
-          SIGNORE_SIGNER: ${{ secrets.SIGNORE_SIGNER }}
+          # SIGNORE_CLIENT_ID: ${{ secrets.SIGNORE_CLIENT_ID }}
+          # SIGNORE_CLIENT_SECRET: ${{ secrets.SIGNORE_CLIENT_SECRET }}
+          # SIGNORE_SIGNER: ${{ secrets.SIGNORE_SIGNER }}
