@@ -36,6 +36,7 @@ type FlatConfig struct {
 	ImageCopyRegions          []string                    `mapstructure:"image_copy_regions" required:"false" cty:"image_copy_regions" hcl:"image_copy_regions"`
 	ImageShareAccounts        []string                    `mapstructure:"image_share_accounts" required:"false" cty:"image_share_accounts" hcl:"image_share_accounts"`
 	ImageTags                 map[string]string           `mapstructure:"image_tags" required:"false" cty:"image_tags" hcl:"image_tags"`
+	SkipCreateImage           *bool                       `mapstructure:"skip_create_image" required:"false" cty:"skip_create_image" hcl:"skip_create_image"`
 	AssociatePublicIpAddress  *bool                       `mapstructure:"associate_public_ip_address" required:"false" cty:"associate_public_ip_address" hcl:"associate_public_ip_address"`
 	SourceImageId             *string                     `mapstructure:"source_image_id" required:"false" cty:"source_image_id" hcl:"source_image_id"`
 	SourceImageName           *string                     `mapstructure:"source_image_name" required:"false" cty:"source_image_name" hcl:"source_image_name"`
@@ -152,6 +153,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"image_copy_regions":           &hcldec.AttrSpec{Name: "image_copy_regions", Type: cty.List(cty.String), Required: false},
 		"image_share_accounts":         &hcldec.AttrSpec{Name: "image_share_accounts", Type: cty.List(cty.String), Required: false},
 		"image_tags":                   &hcldec.AttrSpec{Name: "image_tags", Type: cty.Map(cty.String), Required: false},
+		"skip_create_image":            &hcldec.AttrSpec{Name: "skip_create_image", Type: cty.Bool, Required: false},
 		"associate_public_ip_address":  &hcldec.AttrSpec{Name: "associate_public_ip_address", Type: cty.Bool, Required: false},
 		"source_image_id":              &hcldec.AttrSpec{Name: "source_image_id", Type: cty.String, Required: false},
 		"source_image_name":            &hcldec.AttrSpec{Name: "source_image_name", Type: cty.String, Required: false},

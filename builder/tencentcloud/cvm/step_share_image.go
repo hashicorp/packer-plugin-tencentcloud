@@ -18,7 +18,9 @@ type stepShareImage struct {
 }
 
 func (s *stepShareImage) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	if len(s.ShareAccounts) == 0 {
+	// Skip step if we don't have an image to share or no accounts to share to
+	_, ok := state.GetOk("image")
+	if !ok || len(s.ShareAccounts) == 0 {
 		return multistep.ActionContinue
 	}
 
@@ -58,7 +60,12 @@ func (s *stepShareImage) Cleanup(state multistep.StateBag) {
 	ctx := context.TODO()
 	client := state.Get("cvm_client").(*cvm.Client)
 
-	imageId := state.Get("image").(*cvm.Image).ImageId
+	image, ok := state.GetOk("image")
+	if !ok {
+		return
+	}
+
+	imageId := image.(*cvm.Image).ImageId
 	SayClean(state, "image share")
 
 	req := cvm.NewModifyImageSharePermissionRequest()
