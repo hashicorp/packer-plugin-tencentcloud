@@ -12,6 +12,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/hashicorp/packer-plugin-sdk/uuid"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 )
 
@@ -20,6 +21,12 @@ type stepConfigKeyPair struct {
 	Comm         *communicator.Config
 	DebugKeyPath string
 	keyID        string
+}
+
+func CreateKeyPairName() string {
+	uuid := uuid.TimeOrderedUUID()
+
+	return fmt.Sprintf("packer_%s_%s", uuid[:8], uuid[9:13])
 }
 
 func (s *stepConfigKeyPair) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -51,6 +58,8 @@ func (s *stepConfigKeyPair) Run(ctx context.Context, state multistep.StateBag) m
 		return multistep.ActionContinue
 	}
 
+	// Set a unique value for each key pair name
+	s.Comm.SSHTemporaryKeyPairName = CreateKeyPairName()
 	Say(state, s.Comm.SSHTemporaryKeyPairName, "Trying to create a new keypair")
 
 	req := cvm.NewCreateKeyPairRequest()
