@@ -24,10 +24,6 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
   reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
   for parameter taking.
 
-- `zone` (string) - The zone where your cvm will be launch. You should
-  reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
-  for parameter taking.
-
 <!-- End of code generated from the comments of the TencentCloudAccessConfig struct in builder/tencentcloud/cvm/access_config.go; -->
 
 
@@ -35,6 +31,10 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `instance_type` (string) - The instance type your cvm will be launched by.
   You should reference [Instance Type](https://intl.cloud.tencent.com/document/product/213/11518)
+  for parameter taking.
+
+- `zone` (string) - The zone where your cvm will be launch. You should
+  reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
   for parameter taking.
 
 <!-- End of code generated from the comments of the TencentCloudRunConfig struct in builder/tencentcloud/cvm/run_config.go; -->

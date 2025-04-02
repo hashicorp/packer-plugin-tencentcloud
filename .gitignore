@@ -3,3 +3,4 @@ dist/*
 packer-plugin-tencentcloud
 .docs
 crash.log
+.idea/
