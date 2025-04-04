@@ -134,7 +134,7 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
   type for all data disks, and each data disk size will use the origin
   value in source image.
   The data disks allow for the following argument:
-  -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM` and `CLOUD_SSD`.
+  -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM`, `CLOUD_SSD`, `CLOUD_BSSD`, `CLOUD_HSSD` and `CLOUD_TSSD`.
   -  `disk_size` - Size of the data disk.
   -  `disk_snapshot_id` - Id of the snapshot for a data disk.
 
