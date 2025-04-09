@@ -76,7 +76,7 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	}
 	// System disk snapshot is mandatory, so if there are additional data disks,
 	// length will be larger than 1.
-	if source_image.SnapshotSet != nil && len(source_image.SnapshotSet) > 1 {
+	if len(source_image.SnapshotSet) > 1 {
 		Message(state, "Use source image snapshot data disks, ignore user data disk settings", "")
 		var dataDisks []*cvm.DataDisk
 		for _, snapshot := range source_image.SnapshotSet {
@@ -213,7 +213,7 @@ func (s *stepRunInstance) getUserData(state multistep.StateBag) (string, error) 
 	}
 
 	userData = base64.StdEncoding.EncodeToString([]byte(userData))
-	log.Printf(fmt.Sprintf("[DEBUG]getUserData: user_data: %s", userData))
+	log.Printf("[DEBUG] getUserData: user_data: %s", userData)
 
 	return userData, nil
 }
