@@ -101,6 +101,8 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 
 - `image_tags` (map[string]string) - Key/value pair tags that will be applied to the resulting image.
 
+- `skip_create_image` (bool) - Skip creating an image. When set to true, you don't need to enter target image information, share, copy, etc. The default value is false.
+
 <!-- End of code generated from the comments of the TencentCloudImageConfig struct in builder/tencentcloud/cvm/image_config.go; -->
 
 

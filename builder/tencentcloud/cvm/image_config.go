@@ -33,10 +33,16 @@ type TencentCloudImageConfig struct {
 	// Key/value pair tags that will be applied to the resulting image.
 	ImageTags      map[string]string `mapstructure:"image_tags" required:"false"`
 	skipValidation bool
+	// Skip creating an image. When set to true, you don't need to enter target image information, share, copy, etc. The default value is false.
+	SkipCreateImage bool `mapstructure:"skip_create_image" required:"false"`
 }
 
 func (cf *TencentCloudImageConfig) Prepare(ctx *interpolate.Context) []error {
 	var errs []error
+
+	if cf.SkipCreateImage {
+		return nil
+	}
 
 	if cf.ImageName == "" {
 		errs = append(errs, fmt.Errorf("image_name must be specified"))

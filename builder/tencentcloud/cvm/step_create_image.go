@@ -12,7 +12,8 @@ import (
 )
 
 type stepCreateImage struct {
-	imageId string
+	imageId         string
+	SkipCreateImage bool
 }
 
 func (s *stepCreateImage) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -20,6 +21,12 @@ func (s *stepCreateImage) Run(ctx context.Context, state multistep.StateBag) mul
 
 	config := state.Get("config").(*Config)
 	instance := state.Get("instance").(*cvm.Instance)
+
+	// Optionally skip this step
+	if s.SkipCreateImage {
+		Say(state, "Skipping image creation step", "")
+		return multistep.ActionContinue
+	}
 
 	Say(state, config.ImageName, "Trying to create a new image")
 

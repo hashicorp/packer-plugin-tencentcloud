@@ -14,12 +14,16 @@ import (
 )
 
 type stepCopyImage struct {
-	DesinationRegions []string
-	SourceRegion      string
+	DestinationRegions []string
+	SourceRegion       string
+	SkipCreateImage    bool
 }
 
 func (s *stepCopyImage) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	if len(s.DesinationRegions) == 0 || (len(s.DesinationRegions) == 1 && s.DesinationRegions[0] == s.SourceRegion) {
+	if s.SkipCreateImage {
+		return multistep.ActionContinue
+	}
+	if len(s.DestinationRegions) == 0 || (len(s.DestinationRegions) == 1 && s.DestinationRegions[0] == s.SourceRegion) {
 		return multistep.ActionContinue
 	}
 
@@ -28,12 +32,12 @@ func (s *stepCopyImage) Run(ctx context.Context, state multistep.StateBag) multi
 
 	imageId := state.Get("image").(*cvm.Image).ImageId
 
-	Say(state, strings.Join(s.DesinationRegions, ","), "Trying to copy image to")
+	Say(state, strings.Join(s.DestinationRegions, ","), "Trying to copy image to")
 
 	req := cvm.NewSyncImagesRequest()
 	req.ImageIds = []*string{imageId}
-	copyRegions := make([]*string, 0, len(s.DesinationRegions))
-	for _, region := range s.DesinationRegions {
+	copyRegions := make([]*string, 0, len(s.DestinationRegions))
+	for _, region := range s.DestinationRegions {
 		if region != s.SourceRegion {
 			copyRegions = append(copyRegions, common.StringPtr(region))
 		}
