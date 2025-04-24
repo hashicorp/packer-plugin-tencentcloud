@@ -7,6 +7,7 @@ integration {
   name = "Tencent Cloud"
   description = "The Tencent Cloud plugin provides the capability to build customized images based on an existing base images."
   identifier = "packer/hashicorp/tencentcloud"
+  flags      = ["archived"]
   component {
     type = "builder"
     name = "Tencent Cloud Builder"
