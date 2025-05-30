@@ -12,9 +12,15 @@ import (
 )
 
 type stepPreValidate struct {
+	SkipCreateImage bool
 }
 
 func (s *stepPreValidate) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
+	// No need to validate the image name if we're not creating an image
+	if s.SkipCreateImage {
+		return multistep.ActionContinue
+	}
+
 	config := state.Get("config").(*Config)
 	client := state.Get("cvm_client").(*cvm.Client)
 
