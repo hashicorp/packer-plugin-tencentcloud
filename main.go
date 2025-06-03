@@ -10,12 +10,14 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
 
 	"github.com/hashicorp/packer-plugin-tencentcloud/builder/tencentcloud/cvm"
+	"github.com/hashicorp/packer-plugin-tencentcloud/datasource/tencentcloud/image"
 	"github.com/hashicorp/packer-plugin-tencentcloud/version"
 )
 
 func main() {
 	pps := plugin.NewSet()
 	pps.RegisterBuilder("cvm", new(cvm.Builder))
+	pps.RegisterDatasource("image", new(image.Datasource))
 	pps.SetVersion(version.PluginVersion)
 	err := pps.Run()
 	if err != nil {

@@ -62,7 +62,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 
 	// Accumulate any errors
 	var errs *packersdk.MultiError
-	errs = packersdk.MultiErrorAppend(errs, b.config.TencentCloudAccessConfig.Prepare(&b.config.ctx)...)
+	errs = packersdk.MultiErrorAppend(errs, b.config.TencentCloudAccessConfig.Prepare()...)
 	errs = packersdk.MultiErrorAppend(errs, b.config.TencentCloudImageConfig.Prepare(&b.config.ctx)...)
 	errs = packersdk.MultiErrorAppend(errs, b.config.TencentCloudRunConfig.Prepare(&b.config.ctx)...)
 	if errs != nil && len(errs.Errors) > 0 {

@@ -13,22 +13,22 @@ func TestTencentCloudAccessConfig_Prepare(t *testing.T) {
 		SecretKey: "secret-key",
 	}
 
-	if err := cf.Prepare(nil); err == nil {
+	if err := cf.Prepare(); err == nil {
 		t.Fatal("should raise error: region not set")
 	}
 
 	cf.Region = "ap-guangzhou"
-	if err := cf.Prepare(nil); err != nil {
+	if err := cf.Prepare(); err != nil {
 		t.Fatalf("shouldn't raise error: %v", err)
 	}
 
 	cf.Region = "unknown-region"
-	if err := cf.Prepare(nil); err == nil {
+	if err := cf.Prepare(); err == nil {
 		t.Fatal("should raise error: unknown region")
 	}
 
 	cf.skipValidation = true
-	if err := cf.Prepare(nil); err != nil {
+	if err := cf.Prepare(); err != nil {
 		t.Fatalf("shouldn't raise error: %v", err)
 	}
 }
