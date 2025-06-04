@@ -117,8 +117,9 @@ func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
 	packerId := fmt.Sprintf("packer_%s", uuid.TimeOrderedUUID()[:8])
 	if cf.Comm.SSHKeyPairName == "" && cf.Comm.SSHTemporaryKeyPairName == "" &&
 		cf.Comm.SSHPrivateKeyFile == "" && cf.Comm.SSHPassword == "" && cf.Comm.WinRMPassword == "" {
-		//tencentcloud support key pair name length max to 25
-		cf.Comm.SSHTemporaryKeyPairName = packerId
+		// Key pair names must be unique so we can't use packerId here, instead we set a
+		// dummy value now and a unique name later
+		cf.Comm.SSHTemporaryKeyPairName = "dummy value"
 	}
 
 	errs := cf.Comm.Prepare(ctx)
