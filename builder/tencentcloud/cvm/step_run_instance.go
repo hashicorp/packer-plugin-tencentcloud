@@ -29,9 +29,10 @@ type stepRunInstance struct {
 	InternetMaxBandwidthOut  int64
 	BandwidthPackageId       string
 	CamRoleName              string
+	EnhancedService          *TencentCloudEnhancedService
 	AssociatePublicIpAddress bool
 	Tags                     map[string]string
-	DataDisks                []tencentCloudDataDisk
+	DataDisks                []TencentCloudDataDisk
 }
 
 func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
@@ -139,6 +140,20 @@ func (s *stepRunInstance) Run(ctx context.Context, state multistep.StateBag) mul
 	req.HostName = &s.HostName
 	req.UserData = &userData
 	req.CamRoleName = &s.CamRoleName
+
+	if s.EnhancedService != nil {
+		req.EnhancedService = &cvm.EnhancedService{
+			AutomationService: &cvm.RunAutomationServiceEnabled{
+				Enabled: &s.EnhancedService.AutomationService,
+			},
+			MonitorService: &cvm.RunMonitorServiceEnabled{
+				Enabled: &s.EnhancedService.MonitorService,
+			},
+			SecurityService: &cvm.RunSecurityServiceEnabled{
+				Enabled: &s.EnhancedService.SecurityService,
+			},
+		}
+	}
 	var tags []*cvm.Tag
 	for k, v := range s.Tags {
 		k := k

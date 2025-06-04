@@ -7,29 +7,56 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-// FlattencentCloudDataDisk is an auto-generated flat version of tencentCloudDataDisk.
+// FlatTencentCloudDataDisk is an auto-generated flat version of TencentCloudDataDisk.
 // Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
-type FlattencentCloudDataDisk struct {
+type FlatTencentCloudDataDisk struct {
 	DiskType   *string `mapstructure:"disk_type" cty:"disk_type" hcl:"disk_type"`
 	DiskSize   *int64  `mapstructure:"disk_size" cty:"disk_size" hcl:"disk_size"`
 	SnapshotId *string `mapstructure:"disk_snapshot_id" cty:"disk_snapshot_id" hcl:"disk_snapshot_id"`
 }
 
-// FlatMapstructure returns a new FlattencentCloudDataDisk.
-// FlattencentCloudDataDisk is an auto-generated flat version of tencentCloudDataDisk.
+// FlatMapstructure returns a new FlatTencentCloudDataDisk.
+// FlatTencentCloudDataDisk is an auto-generated flat version of TencentCloudDataDisk.
 // Where the contents a fields with a `mapstructure:,squash` tag are bubbled up.
-func (*tencentCloudDataDisk) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec } {
-	return new(FlattencentCloudDataDisk)
+func (*TencentCloudDataDisk) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec } {
+	return new(FlatTencentCloudDataDisk)
 }
 
-// HCL2Spec returns the hcl spec of a tencentCloudDataDisk.
-// This spec is used by HCL to read the fields of tencentCloudDataDisk.
-// The decoded values from this spec will then be applied to a FlattencentCloudDataDisk.
-func (*FlattencentCloudDataDisk) HCL2Spec() map[string]hcldec.Spec {
+// HCL2Spec returns the hcl spec of a TencentCloudDataDisk.
+// This spec is used by HCL to read the fields of TencentCloudDataDisk.
+// The decoded values from this spec will then be applied to a FlatTencentCloudDataDisk.
+func (*FlatTencentCloudDataDisk) HCL2Spec() map[string]hcldec.Spec {
 	s := map[string]hcldec.Spec{
 		"disk_type":        &hcldec.AttrSpec{Name: "disk_type", Type: cty.String, Required: false},
 		"disk_size":        &hcldec.AttrSpec{Name: "disk_size", Type: cty.Number, Required: false},
 		"disk_snapshot_id": &hcldec.AttrSpec{Name: "disk_snapshot_id", Type: cty.String, Required: false},
+	}
+	return s
+}
+
+// FlatTencentCloudEnhancedService is an auto-generated flat version of TencentCloudEnhancedService.
+// Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
+type FlatTencentCloudEnhancedService struct {
+	SecurityService   *bool `mapstructure:"security_service" required:"false" cty:"security_service" hcl:"security_service"`
+	MonitorService    *bool `mapstructure:"monitor_service" required:"false" cty:"monitor_service" hcl:"monitor_service"`
+	AutomationService *bool `mapstructure:"automation_service" required:"false" cty:"automation_service" hcl:"automation_service"`
+}
+
+// FlatMapstructure returns a new FlatTencentCloudEnhancedService.
+// FlatTencentCloudEnhancedService is an auto-generated flat version of TencentCloudEnhancedService.
+// Where the contents a fields with a `mapstructure:,squash` tag are bubbled up.
+func (*TencentCloudEnhancedService) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec } {
+	return new(FlatTencentCloudEnhancedService)
+}
+
+// HCL2Spec returns the hcl spec of a TencentCloudEnhancedService.
+// This spec is used by HCL to read the fields of TencentCloudEnhancedService.
+// The decoded values from this spec will then be applied to a FlatTencentCloudEnhancedService.
+func (*FlatTencentCloudEnhancedService) HCL2Spec() map[string]hcldec.Spec {
+	s := map[string]hcldec.Spec{
+		"security_service":   &hcldec.AttrSpec{Name: "security_service", Type: cty.Bool, Required: false},
+		"monitor_service":    &hcldec.AttrSpec{Name: "monitor_service", Type: cty.Bool, Required: false},
+		"automation_service": &hcldec.AttrSpec{Name: "automation_service", Type: cty.Bool, Required: false},
 	}
 	return s
 }

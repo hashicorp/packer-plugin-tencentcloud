@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 //go:generate packer-sdc struct-markdown
-//go:generate packer-sdc mapstructure-to-hcl2 -type tencentCloudDataDisk
+//go:generate packer-sdc mapstructure-to-hcl2 -type TencentCloudDataDisk,TencentCloudEnhancedService
 
 package cvm
 
@@ -18,10 +18,22 @@ import (
 	"github.com/pkg/errors"
 )
 
-type tencentCloudDataDisk struct {
+type TencentCloudDataDisk struct {
 	DiskType   string `mapstructure:"disk_type"`
 	DiskSize   int64  `mapstructure:"disk_size"`
 	SnapshotId string `mapstructure:"disk_snapshot_id"`
+}
+
+type TencentCloudEnhancedService struct {
+	// Enables cloud security service. If this parameter is not specified,
+	// the cloud security service will be enabled by default.
+	SecurityService bool `mapstructure:"security_service" required:"false"`
+	// Enables cloud monitor service. If this parameter is not specified, //
+	// the cloud monitor service will be enabled by default.
+	MonitorService bool `mapstructure:"monitor_service" required:"false"`
+	// Whether to enable the TAT service. If this parameter is not specified,
+	// the TAT service is enabled for public images and disabled for other images by default.
+	AutomationService bool `mapstructure:"automation_service" required:"false"`
 }
 
 type TencentCloudRunConfig struct {
@@ -60,7 +72,7 @@ type TencentCloudRunConfig struct {
 	// -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM` and `CLOUD_SSD`.
 	// -  `disk_size` - Size of the data disk.
 	// -  `disk_snapshot_id` - Id of the snapshot for a data disk.
-	DataDisks []tencentCloudDataDisk `mapstructure:"data_disks"`
+	DataDisks []TencentCloudDataDisk `mapstructure:"data_disks"`
 	// Specify vpc your cvm will be launched by.
 	VpcId string `mapstructure:"vpc_id" required:"false"`
 	// Specify vpc name you will create. if `vpc_id` is not set, Packer will
@@ -95,6 +107,10 @@ type TencentCloudRunConfig struct {
 	HostName string `mapstructure:"host_name" required:"false"`
 	// CAM role name.
 	CamRoleName string `mapstructure:"cam_role_name" required:"false"`
+	// Configure enhanced security for the instance. Enables you to disable automatic installation
+	// of certain system services during initial provisioning. If omitted, default values are used
+	// (see https://www.tencentcloud.com/document/api/213/15753#enhancedservice).
+	EnhancedService *TencentCloudEnhancedService `mapstructure:"enhanced_service,omitempty" required:"false"`
 	// Tags to apply to the instance that is _launched_ to create the image.
 	// These tags are _not_ applied to the resulting image.
 	RunTags map[string]string `mapstructure:"run_tags" required:"false"`
