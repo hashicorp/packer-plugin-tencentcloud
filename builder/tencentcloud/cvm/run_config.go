@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 //go:generate packer-sdc struct-markdown
-//go:generate packer-sdc mapstructure-to-hcl2 -type tencentCloudDataDisk
+//go:generate packer-sdc mapstructure-to-hcl2 -type TencentCloudDataDisk
 
 package cvm
 
@@ -18,9 +18,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-type tencentCloudDataDisk struct {
-	DiskType   string `mapstructure:"disk_type"`
-	DiskSize   int64  `mapstructure:"disk_size"`
+type TencentCloudDataDisk struct {
+	// The size of the data disk.
+	DiskSize int64 `mapstructure:"disk_size" required:"true"`
+	// The type of disk to use. See https://www.tencentcloud.com/document/api/213/15753#datadisk for valid values.
+	DiskType string `mapstructure:"disk_type"`
+	// The snapshot to use for the data disk.
 	SnapshotId string `mapstructure:"disk_snapshot_id"`
 }
 
@@ -56,11 +59,9 @@ type TencentCloudRunConfig struct {
 	// disk settings, in such case, `disk_type` argument will be used as disk
 	// type for all data disks, and each data disk size will use the origin
 	// value in source image.
-	// The data disks allow for the following argument:
-	// -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM` and `CLOUD_SSD`.
-	// -  `disk_size` - Size of the data disk.
-	// -  `disk_snapshot_id` - Id of the snapshot for a data disk.
-	DataDisks []tencentCloudDataDisk `mapstructure:"data_disks"`
+	DataDisks []TencentCloudDataDisk `mapstructure:"data_disks"`
+	// Whether to include data disks in the resulting image. Defaults to true.
+	IncludeDataDisks config.Trilean `mapstructure:"include_data_disks" required:"false"`
 	// Specify vpc your cvm will be launched by.
 	VpcId string `mapstructure:"vpc_id" required:"false"`
 	// Specify vpc name you will create. if `vpc_id` is not set, Packer will
@@ -114,6 +115,11 @@ var ValidCBSType = []string{
 }
 
 func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
+	// Include data disks by default
+	if cf.IncludeDataDisks != config.TriFalse {
+		cf.IncludeDataDisks = config.TriTrue
+	}
+
 	packerId := fmt.Sprintf("packer_%s", uuid.TimeOrderedUUID()[:8])
 	if cf.Comm.SSHKeyPairName == "" && cf.Comm.SSHTemporaryKeyPairName == "" &&
 		cf.Comm.SSHPrivateKeyFile == "" && cf.Comm.SSHPassword == "" && cf.Comm.WinRMPassword == "" {

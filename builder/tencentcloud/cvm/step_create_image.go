@@ -6,7 +6,6 @@ package cvm
 import (
 	"context"
 	"fmt"
-
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
 )
@@ -28,12 +27,17 @@ func (s *stepCreateImage) Run(ctx context.Context, state multistep.StateBag) mul
 	req.ImageDescription = &config.ImageDescription
 	req.InstanceId = instance.InstanceId
 
-	// TODO: We should allow user to specify which data disk should be
-	// included into created image.
 	var dataDiskIds []*string
-	for _, disk := range instance.DataDisks {
-		dataDiskIds = append(dataDiskIds, disk.DiskId)
+	// There is no way to correlate instance disk IDs to our own data disk definitions,
+	// so the best we can do is to either include all disks or include none.
+	if config.IncludeDataDisks.True() {
+		for _, disk := range instance.DataDisks {
+			dataDiskIds = append(dataDiskIds, disk.DiskId)
+		}
+	} else {
+		Message(state, "Not including configured data disks in the resulting image", "")
 	}
+
 	if len(dataDiskIds) > 0 {
 		req.DataDiskIds = dataDiskIds
 	}
