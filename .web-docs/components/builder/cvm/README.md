@@ -127,7 +127,7 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
   - LOCAL_BASIC: 50
   - Other: 50 ~ 1000 (need whitelist if > 50)
 
-- `data_disks` ([]tencentCloudDataDisk) - Add one or more data disks to the instance before creating the image.
+- `data_disks` ([]TencentCloudDataDisk) - Add one or more data disks to the instance before creating the image.
   Note that if the source image has data disk snapshots, this argument
   will be ignored, and the running instance will use source image data
   disk settings, in such case, `disk_type` argument will be used as disk
@@ -171,6 +171,10 @@ a [communicator](/packer/docs/templates/legacy_json_templates/communicator) can 
 - `host_name` (string) - host name.
 
 - `cam_role_name` (string) - CAM role name.
+
+- `enhanced_service` (\*TencentCloudEnhancedService) - Configure enhanced security for the instance. Enables you to disable automatic installation
+  of certain system services during initial provisioning. If omitted, default values are used
+  (see https://www.tencentcloud.com/document/api/213/15753#enhancedservice).
 
 - `run_tags` (map[string]string) - Tags to apply to the instance that is _launched_ to create the image.
   These tags are _not_ applied to the resulting image.
