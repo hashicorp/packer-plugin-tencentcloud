@@ -66,6 +66,10 @@ type TencentCloudRunConfig struct {
 	// Specify vpc name you will create. if `vpc_id` is not set, Packer will
 	// create a vpc for you named this parameter.
 	VpcName string `mapstructure:"vpc_name" required:"false"`
+	// The zone where your cvm will be launch. You should
+	// reference [Region and Zone](https://intl.cloud.tencent.com/document/product/213/6091)
+	// for parameter taking.
+	Zone string `mapstructure:"zone" required:"true"`
 	// Specify subnet your cvm will be launched by.
 	SubnetId string `mapstructure:"subnet_id" required:"false"`
 	// Specify subnet name you will create. if `subnet_id` is not set, Packer will
@@ -124,10 +128,6 @@ func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
 	errs := cf.Comm.Prepare(ctx)
 	if cf.SourceImageId == "" && cf.SourceImageName == "" {
 		errs = append(errs, errors.New("source_image_id or source_image_name must be specified"))
-	}
-
-	if cf.SourceImageId != "" && !CheckResourceIdFormat("img", cf.SourceImageId) {
-		errs = append(errs, errors.New("source_image_id wrong format"))
 	}
 
 	if cf.InstanceType == "" {

@@ -22,7 +22,6 @@ type FlatConfig struct {
 	SecretId                  *string                     `mapstructure:"secret_id" required:"true" cty:"secret_id" hcl:"secret_id"`
 	SecretKey                 *string                     `mapstructure:"secret_key" required:"true" cty:"secret_key" hcl:"secret_key"`
 	Region                    *string                     `mapstructure:"region" required:"true" cty:"region" hcl:"region"`
-	Zone                      *string                     `mapstructure:"zone" required:"true" cty:"zone" hcl:"zone"`
 	CvmEndpoint               *string                     `mapstructure:"cvm_endpoint" required:"false" cty:"cvm_endpoint" hcl:"cvm_endpoint"`
 	VpcEndpoint               *string                     `mapstructure:"vpc_endpoint" required:"false" cty:"vpc_endpoint" hcl:"vpc_endpoint"`
 	SecurityToken             *string                     `mapstructure:"security_token" required:"false" cty:"security_token" hcl:"security_token"`
@@ -47,6 +46,7 @@ type FlatConfig struct {
 	DataDisks                 []FlattencentCloudDataDisk  `mapstructure:"data_disks" cty:"data_disks" hcl:"data_disks"`
 	VpcId                     *string                     `mapstructure:"vpc_id" required:"false" cty:"vpc_id" hcl:"vpc_id"`
 	VpcName                   *string                     `mapstructure:"vpc_name" required:"false" cty:"vpc_name" hcl:"vpc_name"`
+	Zone                      *string                     `mapstructure:"zone" required:"true" cty:"zone" hcl:"zone"`
 	SubnetId                  *string                     `mapstructure:"subnet_id" required:"false" cty:"subnet_id" hcl:"subnet_id"`
 	SubnetName                *string                     `mapstructure:"subnet_name" required:"false" cty:"subnet_name" hcl:"subnet_name"`
 	CidrBlock                 *string                     `mapstructure:"cidr_block" required:"false" cty:"cidr_block" hcl:"cidr_block"`
@@ -138,7 +138,6 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"secret_id":                    &hcldec.AttrSpec{Name: "secret_id", Type: cty.String, Required: false},
 		"secret_key":                   &hcldec.AttrSpec{Name: "secret_key", Type: cty.String, Required: false},
 		"region":                       &hcldec.AttrSpec{Name: "region", Type: cty.String, Required: false},
-		"zone":                         &hcldec.AttrSpec{Name: "zone", Type: cty.String, Required: false},
 		"cvm_endpoint":                 &hcldec.AttrSpec{Name: "cvm_endpoint", Type: cty.String, Required: false},
 		"vpc_endpoint":                 &hcldec.AttrSpec{Name: "vpc_endpoint", Type: cty.String, Required: false},
 		"security_token":               &hcldec.AttrSpec{Name: "security_token", Type: cty.String, Required: false},
@@ -163,6 +162,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"data_disks":                   &hcldec.BlockListSpec{TypeName: "data_disks", Nested: hcldec.ObjectSpec((*FlattencentCloudDataDisk)(nil).HCL2Spec())},
 		"vpc_id":                       &hcldec.AttrSpec{Name: "vpc_id", Type: cty.String, Required: false},
 		"vpc_name":                     &hcldec.AttrSpec{Name: "vpc_name", Type: cty.String, Required: false},
+		"zone":                         &hcldec.AttrSpec{Name: "zone", Type: cty.String, Required: false},
 		"subnet_id":                    &hcldec.AttrSpec{Name: "subnet_id", Type: cty.String, Required: false},
 		"subnet_name":                  &hcldec.AttrSpec{Name: "subnet_name", Type: cty.String, Required: false},
 		"cidr_block":                   &hcldec.AttrSpec{Name: "cidr_block", Type: cty.String, Required: false},
