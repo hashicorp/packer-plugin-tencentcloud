@@ -110,7 +110,7 @@ type TencentCloudRunConfig struct {
 }
 
 var ValidCBSType = []string{
-	"LOCAL_BASIC", "LOCAL_SSD", "CLOUD_BASIC", "CLOUD_SSD", "CLOUD_PREMIUM",
+	"LOCAL_BASIC", "LOCAL_SSD", "CLOUD_BASIC", "CLOUD_SSD", "CLOUD_PREMIUM", "CLOUD_BSSD", "CLOUD_HSSD",
 }
 
 func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
