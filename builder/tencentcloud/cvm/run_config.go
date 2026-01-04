@@ -57,7 +57,7 @@ type TencentCloudRunConfig struct {
 	// type for all data disks, and each data disk size will use the origin
 	// value in source image.
 	// The data disks allow for the following argument:
-	// -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM` and `CLOUD_SSD`.
+	// -  `disk_type` - Type of the data disk. Valid choices: `CLOUD_BASIC`, `CLOUD_PREMIUM`, `CLOUD_SSD`, `CLOUD_BSSD`, `CLOUD_HSSD` and `CLOUD_TSSD`.
 	// -  `disk_size` - Size of the data disk.
 	// -  `disk_snapshot_id` - Id of the snapshot for a data disk.
 	DataDisks []tencentCloudDataDisk `mapstructure:"data_disks"`
@@ -110,7 +110,7 @@ type TencentCloudRunConfig struct {
 }
 
 var ValidCBSType = []string{
-	"LOCAL_BASIC", "LOCAL_SSD", "CLOUD_BASIC", "CLOUD_SSD", "CLOUD_PREMIUM",
+	"LOCAL_BASIC", "LOCAL_SSD", "CLOUD_BASIC", "CLOUD_PREMIUM", "CLOUD_BSSD", "CLOUD_SSD", "CLOUD_HSSD", "CLOUD_TSSD",
 }
 
 func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
