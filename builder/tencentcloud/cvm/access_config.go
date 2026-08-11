@@ -228,7 +228,7 @@ func (cf *TencentCloudAccessConfig) Config() error {
 		var str string
 		if value != nil {
 			if v, ok := value[key]; ok {
-				str = v.(string)
+				str, _ = v.(string)
 			}
 		}
 		return str
@@ -409,7 +409,9 @@ func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, er
 		}
 
 		for k, v := range config {
-			packerConfig[k] = strings.TrimSpace(v.(string))
+			if s, ok := v.(string); ok {
+				packerConfig[k] = strings.TrimSpace(s)
+			}
 		}
 	} else {
 		return nil, fmt.Errorf("please set a valid secret_id and secret_key or shared_credentials_dir, %s", err)
@@ -430,11 +432,14 @@ func loadConfigProfile(cf *TencentCloudAccessConfig) (map[string]interface{}, er
 	outerLoop:
 		for k, v := range config {
 			if k == "_sys_param" {
-				tmpMap := v.(map[string]interface{})
-				for tmpK, tmpV := range tmpMap {
-					if tmpK == "region" {
-						packerConfig[tmpK] = strings.TrimSpace(tmpV.(string))
-						break outerLoop
+				if tmpMap, ok := v.(map[string]interface{}); ok {
+					for tmpK, tmpV := range tmpMap {
+						if tmpK == "region" {
+							if regionStr, ok := tmpV.(string); ok {
+								packerConfig[tmpK] = strings.TrimSpace(regionStr)
+								break outerLoop
+							}
+						}
 					}
 				}
 			}

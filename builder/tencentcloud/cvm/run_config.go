@@ -111,10 +111,12 @@ type TencentCloudRunConfig struct {
 
 var ValidCBSType = []string{
 	"LOCAL_BASIC", "LOCAL_SSD", "CLOUD_BASIC", "CLOUD_SSD", "CLOUD_PREMIUM",
+	"CLOUD_BSSD", "CLOUD_HSSD",
 }
 
 func (cf *TencentCloudRunConfig) Prepare(ctx *interpolate.Context) []error {
-	packerId := fmt.Sprintf("packer_%s", uuid.TimeOrderedUUID()[:8])
+	// include clock_seq portion of UUID to avoid collision in parallel builds
+	packerId := fmt.Sprintf("packer_%s", strings.ReplaceAll(uuid.TimeOrderedUUID(), "-", "")[:18])
 	if cf.Comm.SSHKeyPairName == "" && cf.Comm.SSHTemporaryKeyPairName == "" &&
 		cf.Comm.SSHPrivateKeyFile == "" && cf.Comm.SSHPassword == "" && cf.Comm.WinRMPassword == "" {
 		//tencentcloud support key pair name length max to 25
