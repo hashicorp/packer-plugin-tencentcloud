@@ -41,23 +41,31 @@ type Region string
 const (
 	Bangkok       = Region("ap-bangkok")
 	Beijing       = Region("ap-beijing")
+	BeijingFsi    = Region("ap-beijing-fsi")
 	Chengdu       = Region("ap-chengdu")
 	Chongqing     = Region("ap-chongqing")
 	Guangzhou     = Region("ap-guangzhou")
 	GuangzhouOpen = Region("ap-guangzhou-open")
 	Hongkong      = Region("ap-hongkong")
 	Jakarta       = Region("ap-jakarta")
+	JohorBahru    = Region("ap-johorbahru")
 	Mumbai        = Region("ap-mumbai")
+	Osaka         = Region("ap-osaka")
 	Seoul         = Region("ap-seoul")
 	Shanghai      = Region("ap-shanghai")
 	Nanjing       = Region("ap-nanjing")
+	ShanghaiAdc   = Region("ap-shanghai-adc")
 	ShanghaiFsi   = Region("ap-shanghai-fsi")
 	ShenzhenFsi   = Region("ap-shenzhen-fsi")
 	Singapore     = Region("ap-singapore")
 	Tokyo         = Region("ap-tokyo")
+	Zhongwei      = Region("ap-zhongwei")
+	ZhongweiAdc   = Region("ap-zhongwei-adc")
 	Frankfurt     = Region("eu-frankfurt")
 	Moscow        = Region("eu-moscow")
+	SaudiArabia   = Region("me-saudi-arabia")
 	Ashburn       = Region("na-ashburn")
+	Queretaro     = Region("na-queretaro")
 	Siliconvalley = Region("na-siliconvalley")
 	Toronto       = Region("na-toronto")
 	SaoPaulo      = Region("sa-saopaulo")
@@ -65,9 +73,9 @@ const (
 
 var ValidRegions = []Region{
 	Bangkok, Beijing, Chengdu, Chongqing, Guangzhou, GuangzhouOpen, Hongkong, Jakarta, Shanghai, Nanjing,
-	ShanghaiFsi, ShenzhenFsi,
-	Mumbai, Seoul, Singapore, Tokyo, Moscow,
-	Frankfurt, Ashburn, Siliconvalley, Toronto, SaoPaulo,
+	Zhongwei, BeijingFsi, ShanghaiFsi, ShenzhenFsi, ShanghaiAdc, ZhongweiAdc,
+	JohorBahru, Mumbai, Osaka, Seoul, Singapore, Tokyo, Moscow, SaudiArabia,
+	Frankfurt, Ashburn, Queretaro, Siliconvalley, Toronto, SaoPaulo,
 }
 
 type TencentCloudAccessConfig struct {
